@@ -6,8 +6,6 @@ This project was created with [Create React App](https://github.com/facebook/cre
 
 ## Commands
 
-
-
 ``` bash
 # Starts the development server.
 npm start
