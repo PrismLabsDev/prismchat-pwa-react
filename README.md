@@ -16,3 +16,15 @@ npm run build
 # Starts the test runner.
 npm test
 ```
+
+## Test Build
+
+It should be noted that when running the application with the start script, the service worker will not register in the browser. You will first need to build the application and serve the build files to actually run the service worker. This can be done with the following instructions.
+
+``` bash
+# Build project
+npm run build
+
+# Serve build files
+node ./node_modules/serve/build/main.js -s build
+```
