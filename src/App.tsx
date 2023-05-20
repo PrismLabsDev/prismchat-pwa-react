@@ -1,25 +1,31 @@
 import React from 'react';
-import favicon from './assets/favicon.svg';
-import './App.css';
+
+// Components
+import HeaderComponent from './components/HeaderComponent';
+import ChatListComponent from './components/ChatListComponent';
+import ChatWindowComponent from './components/ChatWindowComponent';
 
 function App() {
 	return (
-		<div className="App">
-			<header className="App-header">
-				<img src={favicon} alt="logo" width="200px" />
-				<p>
-					Edit <code>src/App.tsx</code> and save to reload.
-				</p>
-				<a
-					className="App-link"
-					href="https://reactjs.org"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					Learn React
-				</a>
-			</header>
-		</div>
+		<>
+			<div className="bg-zinc-900 h-screen text-white	">
+				<header className="h-16">
+					<div className="h-full">
+						<HeaderComponent />
+					</div>
+				</header>
+				<main className="h-[calc(100vh-64px)]">
+					<div className="h-full flex flex-row">
+						<div className="md:basis-1/4 bg-gradient-to-t from-zinc-900	to-zinc-800">
+							<ChatListComponent />
+						</div>
+						<div className="md:basis-3/4 background">
+							<ChatWindowComponent />
+						</div>
+					</div>
+				</main>
+			</div>
+		</>
 	);
 }
 
