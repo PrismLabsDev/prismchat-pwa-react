@@ -4,12 +4,21 @@
 
 @layer utilities {
   .background {
-    /* position: absolute;
-    width: 1300px;
-    height: 1073px;
-    left: 428px;
-    top: 131px; */
+    background: radial-gradient(44.27% 67.09% at 15.92% 50%, rgba(255, 0, 110, 0.12) 0%, rgba(58, 134, 255, 0.12) 100%), #262626;
+  }
+}
 
-    background: radial-gradient(44.27% 67.09% at 15.92% 50%, rgba(255, 0, 110, 0.12) 0%, rgba(58, 134, 255, 0.12) 100%) /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */, #262626;
+
+@layer base {
+  ::-webkit-scrollbar {
+    @apply w-1.5;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-zinc-950 rounded-full;
   }
 }

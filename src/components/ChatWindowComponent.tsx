@@ -16,7 +16,7 @@ const ChatWindowComponent = () => {
 
 	useEffect(() => {
 		scrollToBottom();
-	});
+	}, [messages]);
 
 	const sendMessage = () => {
 		if (messageText !== '') {
@@ -39,7 +39,10 @@ const ChatWindowComponent = () => {
 	return (
 		<>
 			<div className="flex flex-col h-[calc(100vh-64px)]">
-				<div id="messageList" className="flex flex-row overflow-scroll">
+				<div
+					id="messageList"
+					className="flex flex-row overflow-scroll pb-0 overflow-x-hidden"
+				>
 					<div className="basis-10/12 mx-auto">
 						{messages.map((message: any, index: any) => {
 							if (message.sent) {
@@ -57,6 +60,7 @@ const ChatWindowComponent = () => {
 						})}
 					</div>
 				</div>
+
 				<div className="flex flex-row">
 					<div className="basis-10/12 w-full mx-auto mt-5 mb-10 bg-zinc-900 rounded-full">
 						<div className="flex flex-row my-3 mx-3 space-x-2">
