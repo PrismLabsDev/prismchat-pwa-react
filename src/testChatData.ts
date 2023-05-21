@@ -18,14 +18,14 @@ const data = [
 			'Non elit commodo excepteur deserunt incididunt ex anim excepteur aute qui. Irure proident officia mollit enim dolor voluptate incididunt. Eiusmod duis quis pariatur eiusmod dolor nulla aute amet voluptate aute esse cupidatat officia. Sunt esse ex ut velit commodo adipisicing est reprehenderit Lorem sunt ipsum eu. Dolore Lorem velit ea cupidatat laborum cupidatat velit amet sit id nostrud ad ipsum.\r\n',
 	},
 	{
-		name: 'exercitation',
-		newMessage: false,
+		name: 'exercitationexercitationexercitationexercitation',
+		newMessage: true,
 		lastMessage:
 			'Non elit commodo excepteur deserunt incididunt ex anim excepteur aute qui. Irure proident officia mollit enim dolor voluptate incididunt. Eiusmod duis quis pariatur eiusmod dolor nulla aute amet voluptate aute esse cupidatat officia. Sunt esse ex ut velit commodo adipisicing est reprehenderit Lorem sunt ipsum eu. Dolore Lorem velit ea cupidatat laborum cupidatat velit amet sit id nostrud ad ipsum.\r\n',
 	},
 	{
 		name: 'occaecat',
-		newMessage: true,
+		newMessage: false,
 		lastMessage:
 			'Non elit commodo excepteur deserunt incididunt ex anim excepteur aute qui. Irure proident officia mollit enim dolor voluptate incididunt. Eiusmod duis quis pariatur eiusmod dolor nulla aute amet voluptate aute esse cupidatat officia. Sunt esse ex ut velit commodo adipisicing est reprehenderit Lorem sunt ipsum eu. Dolore Lorem velit ea cupidatat laborum cupidatat velit amet sit id nostrud ad ipsum.\r\n',
 	},
@@ -37,7 +37,7 @@ const data = [
 	},
 	{
 		name: 'reprehenderit',
-		newMessage: false,
+		newMessage: true,
 		lastMessage:
 			'Non elit commodo excepteur deserunt incididunt ex anim excepteur aute qui. Irure proident officia mollit enim dolor voluptate incididunt. Eiusmod duis quis pariatur eiusmod dolor nulla aute amet voluptate aute esse cupidatat officia. Sunt esse ex ut velit commodo adipisicing est reprehenderit Lorem sunt ipsum eu. Dolore Lorem velit ea cupidatat laborum cupidatat velit amet sit id nostrud ad ipsum.\r\n',
 	},

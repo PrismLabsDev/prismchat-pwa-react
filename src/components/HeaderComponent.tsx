@@ -5,6 +5,7 @@ import {
 	MdMessage,
 	MdSwapHoriz,
 	MdDelete,
+	MdChevronLeft,
 } from 'react-icons/md';
 import { toSvg } from 'jdenticon';
 
@@ -18,6 +19,9 @@ const HeaderComponent = () => {
 			<div className="flex flex-row h-full">
 				<div className="basis-1/4 flex flex-row border-r border-zinc-700 items-center px-5">
 					<div className="basis-1/2 flex flex-row justify-start space-x-3">
+						<button>
+							<MdChevronLeft />
+						</button>
 						<button>
 							<MdQrCode2 />
 						</button>
