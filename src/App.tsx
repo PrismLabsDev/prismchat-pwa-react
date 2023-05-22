@@ -56,7 +56,7 @@ function App() {
 
 	return (
 		<>
-			<AppContext.Provider value={{ onChats, setOnChats }}>
+			<AppContext.Provider value={{ onChats, setOnChats, identityPublickey }}>
 				<div className="bg-zinc-900 h-screen text-white">
 					<main className="h-full">
 						{/* Desktop */}

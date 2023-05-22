@@ -19,7 +19,8 @@ import OverlayExchangeComponent from './OverlayExchangeComponent';
 import OverlayNewChatComponent from './OverlayNewChatComponent';
 
 const ChatListComponent = () => {
-	const { onChats, setOnChats }: any = useContext(AppContext);
+	const { onChats, setOnChats, identityPublickey }: any =
+		useContext(AppContext);
 
 	const [chats, setChats]: any = useState([]);
 	const [openOverlayQR, setOpenOverlayQR]: any = useState(false);
@@ -45,7 +46,7 @@ const ChatListComponent = () => {
 						</button>
 						<button
 							onClick={() => {
-								navigator.clipboard.writeText('TestCopyKey');
+								navigator.clipboard.writeText(identityPublickey);
 							}}
 						>
 							<MdOutlineKey />
