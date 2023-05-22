@@ -75,32 +75,30 @@ function App() {
 					</main>
 				</div>
 				<OverlayComponent show={openOverlayInit}>
-					<div className="w-[75vw] md:w-[50vw] flex flex-col space-y-5">
-						<p className="font-bold	text-3xl">Setup</p>
-						<p>
-							We did not find any Prism keys in this browser. Do we have your
-							permission to generate keys for you to start using the Prism Chat
-							service?
-						</p>
-						<p className="font-bold">
-							This application is for demonstration purposes ONLY!
-						</p>
-						<div className="flex flex-row justify-end space-x-5 border-t-2 border-zinc-800 pt-3">
-							<button
-								onClick={() => {
-									createNewAccount();
-								}}
-							>
-								Accept
-							</button>
-							<button
-								onClick={() => {
-									setOpenOverlayInit(false);
-								}}
-							>
-								Close
-							</button>
-						</div>
+					<p className="font-bold	text-3xl">Setup</p>
+					<p>
+						We did not find any Prism keys in this browser. Do we have your
+						permission to generate keys for you to start using the Prism Chat
+						service?
+					</p>
+					<p className="font-bold">
+						This application is for demonstration purposes ONLY!
+					</p>
+					<div className="flex flex-row justify-end space-x-5 border-t-2 border-zinc-800 pt-3">
+						<button
+							onClick={() => {
+								createNewAccount();
+							}}
+						>
+							Accept
+						</button>
+						<button
+							onClick={() => {
+								setOpenOverlayInit(false);
+							}}
+						>
+							Close
+						</button>
 					</div>
 				</OverlayComponent>
 			</AppContext.Provider>

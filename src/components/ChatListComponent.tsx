@@ -112,14 +112,11 @@ const ChatListComponent = () => {
 
 			{/* Overlay Destroy */}
 			<OverlayComponent show={openOverlayDestroy}>
-				<OverlayDestroyComponent />
-				<button
-					onClick={() => {
+				<OverlayDestroyComponent
+					close={() => {
 						setOpenOverlayDestroy(false);
 					}}
-				>
-					CLOSE
-				</button>
+				/>
 			</OverlayComponent>
 
 			{/* Overlay Exchange */}
