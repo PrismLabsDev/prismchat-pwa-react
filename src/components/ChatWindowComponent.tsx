@@ -107,6 +107,7 @@ const ChatWindowComponent = () => {
 							<div className="flex flex-row my-3 mx-3 space-x-2">
 								<div className="basis-10/12">
 									<input
+										autoFocus
 										className="rounded-full bg-zinc-800 px-3 py-1 w-full outline-none"
 										placeholder="Aa"
 										type="text"
