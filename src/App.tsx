@@ -1,16 +1,58 @@
 import React, { useEffect, useState } from 'react';
 import { AppContext } from './contexts/AppContext';
+import { db } from './services/db';
+import authUtil from './services/authUtil';
+import prismClient from './services/prismClient';
 
 // Components
 import ChatListComponent from './components/ChatListComponent';
 import ChatWindowComponent from './components/ChatWindowComponent';
+import OverlayComponent from './components/OverlayComponent';
 
 function App() {
 	const [onChats, setOnChats] = useState(true);
+	const [openOverlayInit, setOpenOverlayInit] = useState(false);
+	const [identityPublickey, setIdentityPublickey] = useState(null);
 
 	useEffect(() => {
-		console.log('App started!');
-	}, []);
+		(async function () {
+			let identityKeysCheck = await db.general
+				.where('name')
+				.equals('IdentityKeys')
+				.first();
+
+			if (!identityKeysCheck) {
+				setOpenOverlayInit(true);
+			} else {
+				setIdentityPublickey(identityKeysCheck.value.public);
+			}
+		})();
+	});
+
+	const createNewAccount: any = async () => {
+		// Create new account & IdentityKeys
+		const prism: any = await prismClient.init();
+		await db.general.add({
+			name: 'IdentityKeys',
+			value: prism.IdentityKeys,
+		});
+
+		// Create new box keys
+		const prismBox: any = await prismClient.init();
+		const generatedBoxKeys = prismBox.generateIdentityKeys();
+		await db.general.add({
+			name: 'BoxKeys',
+			value: generatedBoxKeys,
+		});
+
+		// Authenticate
+		const { cypherText, nonce } = await authUtil.request();
+		const access_token = await authUtil.verify(cypherText, nonce);
+		localStorage.setItem('access_token', access_token);
+
+		// Close creation dialogue
+		setOpenOverlayInit(false);
+	};
 
 	return (
 		<>
@@ -32,6 +74,35 @@ function App() {
 						</div>
 					</main>
 				</div>
+				<OverlayComponent show={openOverlayInit}>
+					<div className="w-[75vw] md:w-[50vw] flex flex-col space-y-5">
+						<p className="font-bold	text-3xl">Setup</p>
+						<p>
+							We did not find any Prism keys in this browser. Do we have your
+							permission to generate keys for you to start using the Prism Chat
+							service?
+						</p>
+						<p className="font-bold">
+							This application is for demonstration purposes ONLY!
+						</p>
+						<div className="flex flex-row justify-end space-x-5 border-t-2 border-zinc-800 pt-3">
+							<button
+								onClick={() => {
+									createNewAccount();
+								}}
+							>
+								Accept
+							</button>
+							<button
+								onClick={() => {
+									setOpenOverlayInit(false);
+								}}
+							>
+								Close
+							</button>
+						</div>
+					</div>
+				</OverlayComponent>
 			</AppContext.Provider>
 		</>
 	);
