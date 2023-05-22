@@ -15,9 +15,9 @@ const ChatWindowComponent = () => {
 	const [messages, setMessages]: any = useState([]);
 	const [messageText, setMessageText] = useState('');
 	const [avatar, setAvatar] = useState('');
-	const [vp, setvp] = useState(window.innerHeight);
 
 	const scrollElement: any = useRef(null);
+	const inputElement: any = useRef(null);
 
 	useEffect(() => {
 		setAvatar(toSvg('ex', 100));
@@ -39,6 +39,10 @@ const ChatWindowComponent = () => {
 			]);
 		}
 		setMessageText('');
+
+		if (inputElement.current) {
+			inputElement.current.focus();
+		}
 	};
 
 	const scrollToBottom = () => {
@@ -49,7 +53,7 @@ const ChatWindowComponent = () => {
 		<>
 			{/* h-screen */}
 			<div className="background">
-				<div className="basis-3/4 h-16 flex flex-row justify-between bg-zinc-900">
+				<div className="h-16 flex flex-row justify-between bg-zinc-900">
 					<div className="flex flex-row">
 						<button
 							className="px-5 block md:hidden"
@@ -66,7 +70,7 @@ const ChatWindowComponent = () => {
 						/>
 
 						<div className="flex flex-col my-auto">
-							<p>{vp}</p>
+							<p>ex</p>
 						</div>
 					</div>
 					<div className="flex flex-row my-auto mr-5 space-x-2">
@@ -109,6 +113,7 @@ const ChatWindowComponent = () => {
 							<div className="flex flex-row my-3 mx-3 space-x-2">
 								<div className="basis-10/12">
 									<input
+										ref={inputElement}
 										autoFocus
 										className="rounded-full bg-zinc-800 px-3 py-1 w-full outline-none"
 										placeholder="Aa"
@@ -116,12 +121,6 @@ const ChatWindowComponent = () => {
 										value={messageText}
 										onChange={(e) => {
 											setMessageText(e.target.value);
-										}}
-										onFocus={() => {
-											setvp(window.innerHeight);
-										}}
-										onBlur={() => {
-											setvp(window.innerHeight);
 										}}
 										onKeyUp={(event) => {
 											if (event.key === 'Enter') {
