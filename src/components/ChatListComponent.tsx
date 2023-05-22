@@ -17,7 +17,10 @@ const ChatListComponent = () => {
 	const { onChats, setOnChats }: any = useContext(AppContext);
 
 	const [chats, setChats]: any = useState([]);
-	const [open, setOpen]: any = useState(false);
+	const [openOverlayQR, setOpenOverlayQR]: any = useState(false);
+	const [openOverlayDestroy, setOpenOverlayDestroy]: any = useState(false);
+	const [openOverlayExchange, setOpenOverlayExchange]: any = useState(false);
+	const [openOverlayNew, setOpenOverlayNew]: any = useState(false);
 
 	useEffect(() => {
 		setChats(testChatData);
@@ -28,21 +31,41 @@ const ChatListComponent = () => {
 			<div className="flex flex-col border-r border-zinc-700 w-full">
 				<div className="flex flex-row items-center px-5 h-16 bg-zinc-900">
 					<div className="basis-1/2 flex flex-row justify-start space-x-3">
-						<button>
+						<button
+							onClick={() => {
+								setOpenOverlayQR(true);
+							}}
+						>
 							<MdQrCode2 />
 						</button>
-						<button>
+						<button
+							onClick={() => {
+								navigator.clipboard.writeText('TestCopyKey');
+							}}
+						>
 							<MdOutlineKey />
 						</button>
 					</div>
 					<div className="basis-1/2 flex flex-row justify-end space-x-3">
-						<button>
+						<button
+							onClick={() => {
+								setOpenOverlayDestroy(true);
+							}}
+						>
 							<MdDelete />
 						</button>
-						<button>
+						<button
+							onClick={() => {
+								setOpenOverlayExchange(true);
+							}}
+						>
 							<MdSwapHoriz />
 						</button>
-						<button>
+						<button
+							onClick={() => {
+								setOpenOverlayNew(true);
+							}}
+						>
 							<MdMessage />
 						</button>
 					</div>
@@ -70,11 +93,48 @@ const ChatListComponent = () => {
 				</div>
 			</div>
 
-			<OverlayComponent show={open}>
-				<p>Test List Component</p>
+			{/* Overlay QR */}
+			<OverlayComponent show={openOverlayQR}>
+				<p>QR Code</p>
 				<button
 					onClick={() => {
-						setOpen(false);
+						setOpenOverlayQR(false);
+					}}
+				>
+					CLOSE
+				</button>
+			</OverlayComponent>
+
+			{/* Overlay Destroy */}
+			<OverlayComponent show={openOverlayDestroy}>
+				<p>Destroy</p>
+				<button
+					onClick={() => {
+						setOpenOverlayDestroy(false);
+					}}
+				>
+					CLOSE
+				</button>
+			</OverlayComponent>
+
+			{/* Overlay Exchange */}
+			<OverlayComponent show={openOverlayExchange}>
+				<p>Exchange Keys</p>
+				<button
+					onClick={() => {
+						setOpenOverlayExchange(false);
+					}}
+				>
+					CLOSE
+				</button>
+			</OverlayComponent>
+
+			{/* Overlay New */}
+			<OverlayComponent show={openOverlayNew}>
+				<p>New Chat</p>
+				<button
+					onClick={() => {
+						setOpenOverlayNew(false);
 					}}
 				>
 					CLOSE

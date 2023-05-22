@@ -8,6 +8,7 @@ import { AppContext } from '../contexts/AppContext';
 // Components
 import ReceivedMessageComponent from './ReceivedMessageComponent';
 import SentMessageComponent from './SentMessageComponent';
+import OverlayComponent from './OverlayComponent';
 
 const ChatWindowComponent = () => {
 	const { onChats, setOnChats }: any = useContext(AppContext);
@@ -15,6 +16,8 @@ const ChatWindowComponent = () => {
 	const [messages, setMessages]: any = useState([]);
 	const [messageText, setMessageText] = useState('');
 	const [avatar, setAvatar] = useState('');
+	const [openOverlayEdit, setOpenOverlayEdit]: any = useState(false);
+	const [openOverlayDestroy, setOpenOverlayDestroy]: any = useState(false);
 
 	const scrollElement: any = useRef(null);
 	const inputElement: any = useRef(null);
@@ -74,10 +77,18 @@ const ChatWindowComponent = () => {
 						</div>
 					</div>
 					<div className="flex flex-row my-auto mr-5 space-x-2">
-						<button>
+						<button
+							onClick={() => {
+								setOpenOverlayEdit(true);
+							}}
+						>
 							<MdModeEdit />
 						</button>
-						<button>
+						<button
+							onClick={() => {
+								setOpenOverlayDestroy(true);
+							}}
+						>
 							<MdDelete />
 						</button>
 					</div>
@@ -144,6 +155,30 @@ const ChatWindowComponent = () => {
 					</div>
 				</div>
 			</div>
+
+			{/* Overlay QR */}
+			<OverlayComponent show={openOverlayEdit}>
+				<p>Edit chat name</p>
+				<button
+					onClick={() => {
+						setOpenOverlayEdit(false);
+					}}
+				>
+					CLOSE
+				</button>
+			</OverlayComponent>
+
+			{/* Overlay Destroy */}
+			<OverlayComponent show={openOverlayDestroy}>
+				<p>Destroy</p>
+				<button
+					onClick={() => {
+						setOpenOverlayDestroy(false);
+					}}
+				>
+					CLOSE
+				</button>
+			</OverlayComponent>
 		</>
 	);
 };
