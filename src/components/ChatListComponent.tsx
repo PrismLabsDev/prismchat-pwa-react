@@ -13,6 +13,11 @@ import { AppContext } from '../contexts/AppContext';
 import ChatCardComponent from './ChatCardComponent';
 import OverlayComponent from './OverlayComponent';
 
+import OverlayQRComponent from './OverlayQRComponent';
+import OverlayDestroyComponent from './OverlayDestroyComponent';
+import OverlayExchangeComponent from './OverlayExchangeComponent';
+import OverlayNewChatComponent from './OverlayNewChatComponent';
+
 const ChatListComponent = () => {
 	const { onChats, setOnChats }: any = useContext(AppContext);
 
@@ -95,7 +100,7 @@ const ChatListComponent = () => {
 
 			{/* Overlay QR */}
 			<OverlayComponent show={openOverlayQR}>
-				<p>QR Code</p>
+				<OverlayQRComponent />
 				<button
 					onClick={() => {
 						setOpenOverlayQR(false);
@@ -107,7 +112,7 @@ const ChatListComponent = () => {
 
 			{/* Overlay Destroy */}
 			<OverlayComponent show={openOverlayDestroy}>
-				<p>Destroy</p>
+				<OverlayDestroyComponent />
 				<button
 					onClick={() => {
 						setOpenOverlayDestroy(false);
@@ -119,7 +124,7 @@ const ChatListComponent = () => {
 
 			{/* Overlay Exchange */}
 			<OverlayComponent show={openOverlayExchange}>
-				<p>Exchange Keys</p>
+				<OverlayExchangeComponent />
 				<button
 					onClick={() => {
 						setOpenOverlayExchange(false);
@@ -131,7 +136,7 @@ const ChatListComponent = () => {
 
 			{/* Overlay New */}
 			<OverlayComponent show={openOverlayNew}>
-				<p>New Chat</p>
+				<OverlayNewChatComponent />
 				<button
 					onClick={() => {
 						setOpenOverlayNew(false);

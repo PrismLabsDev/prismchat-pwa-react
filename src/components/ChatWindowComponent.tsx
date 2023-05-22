@@ -9,6 +9,8 @@ import { AppContext } from '../contexts/AppContext';
 import ReceivedMessageComponent from './ReceivedMessageComponent';
 import SentMessageComponent from './SentMessageComponent';
 import OverlayComponent from './OverlayComponent';
+import OverlayEditChatComponent from './OverlayEditChatComponent';
+import OverlayDestroyChatComponent from './OverlayDestroyChatComponent';
 
 const ChatWindowComponent = () => {
 	const { onChats, setOnChats }: any = useContext(AppContext);
@@ -158,7 +160,7 @@ const ChatWindowComponent = () => {
 
 			{/* Overlay QR */}
 			<OverlayComponent show={openOverlayEdit}>
-				<p>Edit chat name</p>
+				<OverlayEditChatComponent />
 				<button
 					onClick={() => {
 						setOpenOverlayEdit(false);
@@ -170,7 +172,7 @@ const ChatWindowComponent = () => {
 
 			{/* Overlay Destroy */}
 			<OverlayComponent show={openOverlayDestroy}>
-				<p>Destroy</p>
+				<OverlayDestroyChatComponent />
 				<button
 					onClick={() => {
 						setOpenOverlayDestroy(false);
