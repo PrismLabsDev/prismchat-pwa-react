@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { AppContext } from './contexts/AppContext';
 
 // Components
-import HeaderComponent from './components/HeaderComponent';
 import ChatListComponent from './components/ChatListComponent';
 import ChatWindowComponent from './components/ChatWindowComponent';
 
 function App() {
 	const [onChats, setOnChats] = useState(true);
+
+	useEffect(() => {
+		console.log('App started!');
+	}, []);
 
 	return (
 		<>

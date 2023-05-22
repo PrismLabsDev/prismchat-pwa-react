@@ -58,7 +58,7 @@ const ChatWindowComponent = () => {
 						<button
 							className="px-5 block md:hidden"
 							onClick={() => {
-								setOnChats(true);
+								setOnChats(!onChats);
 							}}
 						>
 							<MdChevronLeft />
