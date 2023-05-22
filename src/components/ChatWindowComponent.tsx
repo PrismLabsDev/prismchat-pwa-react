@@ -1,16 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { MdSend, MdDelete, MdModeEdit } from 'react-icons/md';
+import React, { useEffect, useState, useContext, useRef } from 'react';
+import { MdSend, MdDelete, MdModeEdit, MdChevronLeft } from 'react-icons/md';
 import { toSvg } from 'jdenticon';
 import testMessageData from '../testMessageData';
+
+import { AppContext } from '../contexts/AppContext';
 
 // Components
 import ReceivedMessageComponent from './ReceivedMessageComponent';
 import SentMessageComponent from './SentMessageComponent';
 
 const ChatWindowComponent = () => {
+	const { onChats, setOnChats }: any = useContext(AppContext);
+
 	const [messages, setMessages]: any = useState([]);
 	const [messageText, setMessageText] = useState('');
 	const [avatar, setAvatar] = useState('');
+
+	const scrollElement: any = useRef(null);
 
 	useEffect(() => {
 		setAvatar(toSvg('ex', 100));
@@ -35,21 +41,29 @@ const ChatWindowComponent = () => {
 	};
 
 	const scrollToBottom = () => {
-		let scrollingElement: any = document.querySelector('#messageList');
-		scrollingElement.scrollTop = scrollingElement.scrollHeight;
+		scrollElement.current.scrollTop = scrollElement.current.scrollHeight;
 	};
 
 	return (
 		<>
 			<div className="background">
-				<div className="basis-3/4 flex flex-row justify-between bg-zinc-900">
+				<div className="basis-3/4 h-16 flex flex-row justify-between bg-zinc-900">
 					<div className="flex flex-row">
+						<button
+							className="px-5 block md:hidden"
+							onClick={() => {
+								setOnChats(true);
+							}}
+						>
+							<MdChevronLeft />
+						</button>
 						<img
-							className="p-1 w-16"
+							className="p-1 mr-2 w-12"
 							src={`data:image/svg+xml;utf8,${encodeURIComponent(avatar)}`}
 							alt="avatar"
 						/>
-						<div className="flex flex-col my-auto ml-5">
+
+						<div className="flex flex-col my-auto">
 							<p>et</p>
 						</div>
 					</div>
@@ -64,7 +78,7 @@ const ChatWindowComponent = () => {
 				</div>
 				<div className="flex flex-col h-[calc(100vh-64px)]">
 					<div
-						id="messageList"
+						ref={scrollElement}
 						className="flex flex-row overflow-scroll pb-0 overflow-x-hidden"
 					>
 						<div className="basis-10/12 mx-auto">

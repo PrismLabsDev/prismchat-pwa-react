@@ -1,18 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import {
 	MdQrCode2,
 	MdOutlineKey,
 	MdMessage,
 	MdSwapHoriz,
 	MdDelete,
-	MdChevronLeft,
 } from 'react-icons/md';
 import testChatData from '../testChatData';
 
+import { AppContext } from '../contexts/AppContext';
+
 import ChatCardComponent from './ChatCardComponent';
+import OverlayComponent from './OverlayComponent';
 
 const ChatListComponent = () => {
+	const { onChats, setOnChats }: any = useContext(AppContext);
+
 	const [chats, setChats]: any = useState([]);
+	const [open, setOpen]: any = useState(false);
 
 	useEffect(() => {
 		setChats(testChatData);
@@ -46,19 +51,35 @@ const ChatListComponent = () => {
 					<div className="flex flex-col space-y-2 p-2 h-[calc(100vh-64px)] overflow-scroll overflow-x-hidden">
 						{chats.map((chat: any, index: any) => {
 							return (
-								<div key={index}>
+								<button
+									key={index}
+									onClick={() => {
+										setOnChats(false);
+									}}
+								>
 									<ChatCardComponent
 										name={chat.name}
 										newMessage={chat.newMessage}
 										lastMessage={chat.lastMessage}
 										index={index}
 									/>
-								</div>
+								</button>
 							);
 						})}
 					</div>
 				</div>
 			</div>
+
+			<OverlayComponent show={open}>
+				<p>Test List Component</p>
+				<button
+					onClick={() => {
+						setOpen(false);
+					}}
+				>
+					CLOSE
+				</button>
+			</OverlayComponent>
 		</>
 	);
 };

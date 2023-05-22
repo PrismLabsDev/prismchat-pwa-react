@@ -21,7 +21,7 @@ const ChatCardComponent = ({
 
 	return (
 		<>
-			<button
+			<div
 				className={`${
 					index === 0 ? 'outline outline-zinc-600' : ''
 				} bg-zinc-900 rounded-2xl py-2 px-2 w-full`}
@@ -49,7 +49,7 @@ const ChatCardComponent = ({
 						)}
 					</div>
 				</div>
-			</button>
+			</div>
 		</>
 	);
 };
