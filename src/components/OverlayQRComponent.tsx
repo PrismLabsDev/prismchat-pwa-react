@@ -1,22 +1,31 @@
 import React, { useEffect, useState, useContext } from 'react';
+import QRCode from 'qrcode';
 
 import { AppContext } from '../contexts/AppContext';
 
 const OverlayQRComponent = ({ close }: any) => {
-	const { onChats, setOnChats }: any = useContext(AppContext);
+	const { onChats, setOnChats, identityPublickey }: any =
+		useContext(AppContext);
+
+	const [qrUri, setQrUri] = useState('');
+
+	useEffect(() => {
+		(async function () {
+			setQrUri(
+				await QRCode.toDataURL(identityPublickey, {
+					width: 1000,
+				})
+			);
+		})();
+	});
 
 	return (
 		<>
-			<p className="font-bold	text-3xl">QR Component</p>
-			<p className="font-bold">Info</p>
+			<p className="font-bold	text-3xl">QR Identity</p>
+			<p className="font-bold">
+				<img src={qrUri} alt="Generated QR Public Identity key." />
+			</p>
 			<div className="flex flex-row justify-end space-x-5 border-t-2 border-zinc-800 pt-3">
-				<button
-					onClick={() => {
-						console.log('accept');
-					}}
-				>
-					Accept
-				</button>
 				<button
 					onClick={() => {
 						close();
