@@ -160,26 +160,20 @@ const ChatWindowComponent = () => {
 
 			{/* Overlay QR */}
 			<OverlayComponent show={openOverlayEdit}>
-				<OverlayEditChatComponent />
-				<button
-					onClick={() => {
+				<OverlayEditChatComponent
+					close={() => {
 						setOpenOverlayEdit(false);
 					}}
-				>
-					CLOSE
-				</button>
+				/>
 			</OverlayComponent>
 
 			{/* Overlay Destroy */}
 			<OverlayComponent show={openOverlayDestroy}>
-				<OverlayDestroyChatComponent />
-				<button
-					onClick={() => {
+				<OverlayDestroyChatComponent
+					close={() => {
 						setOpenOverlayDestroy(false);
 					}}
-				>
-					CLOSE
-				</button>
+				/>
 			</OverlayComponent>
 		</>
 	);

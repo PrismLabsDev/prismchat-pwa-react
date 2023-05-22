@@ -100,14 +100,11 @@ const ChatListComponent = () => {
 
 			{/* Overlay QR */}
 			<OverlayComponent show={openOverlayQR}>
-				<OverlayQRComponent />
-				<button
-					onClick={() => {
+				<OverlayQRComponent
+					close={() => {
 						setOpenOverlayQR(false);
 					}}
-				>
-					CLOSE
-				</button>
+				/>
 			</OverlayComponent>
 
 			{/* Overlay Destroy */}
@@ -121,26 +118,20 @@ const ChatListComponent = () => {
 
 			{/* Overlay Exchange */}
 			<OverlayComponent show={openOverlayExchange}>
-				<OverlayExchangeComponent />
-				<button
-					onClick={() => {
+				<OverlayExchangeComponent
+					close={() => {
 						setOpenOverlayExchange(false);
 					}}
-				>
-					CLOSE
-				</button>
+				/>
 			</OverlayComponent>
 
 			{/* Overlay New */}
 			<OverlayComponent show={openOverlayNew}>
-				<OverlayNewChatComponent />
-				<button
-					onClick={() => {
+				<OverlayNewChatComponent
+					close={() => {
 						setOpenOverlayNew(false);
 					}}
-				>
-					CLOSE
-				</button>
+				/>
 			</OverlayComponent>
 		</>
 	);
