@@ -15,6 +15,7 @@ const ChatWindowComponent = () => {
 	const [messages, setMessages]: any = useState([]);
 	const [messageText, setMessageText] = useState('');
 	const [avatar, setAvatar] = useState('');
+	const [vp, setvp] = useState(window.innerHeight);
 
 	const scrollElement: any = useRef(null);
 
@@ -46,6 +47,7 @@ const ChatWindowComponent = () => {
 
 	return (
 		<>
+			{/* h-screen */}
 			<div className="background">
 				<div className="basis-3/4 h-16 flex flex-row justify-between bg-zinc-900">
 					<div className="flex flex-row">
@@ -64,7 +66,7 @@ const ChatWindowComponent = () => {
 						/>
 
 						<div className="flex flex-col my-auto">
-							<p>et</p>
+							<p>{vp}</p>
 						</div>
 					</div>
 					<div className="flex flex-row my-auto mr-5 space-x-2">
@@ -114,6 +116,12 @@ const ChatWindowComponent = () => {
 										value={messageText}
 										onChange={(e) => {
 											setMessageText(e.target.value);
+										}}
+										onFocus={() => {
+											setvp(window.innerHeight);
+										}}
+										onBlur={() => {
+											setvp(window.innerHeight);
 										}}
 										onKeyUp={(event) => {
 											if (event.key === 'Enter') {
