@@ -1,7 +1,10 @@
 import React, { useEffect, useState, useContext, useRef } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db } from '../services/db';
+import api from '../services/api';
+import prismClient from '../services/prismClient';
 import { MdSend, MdDelete, MdModeEdit, MdChevronLeft } from 'react-icons/md';
 import { toSvg } from 'jdenticon';
-import testMessageData from '../testMessageData';
 
 import { AppContext } from '../contexts/AppContext';
 
@@ -13,8 +16,13 @@ import OverlayEditChatComponent from './OverlayEditChatComponent';
 import OverlayDestroyChatComponent from './OverlayDestroyChatComponent';
 
 const ChatWindowComponent = () => {
-	const { chatWindowSelected, setChatWindowSelected }: any =
-		useContext(AppContext);
+	const {
+		chatWindowSelected,
+		setChatWindowSelected,
+		identityPublickey,
+		selectedChat,
+		setSelectedChat,
+	}: any = useContext(AppContext);
 
 	const [messages, setMessages]: any = useState([]);
 	const [messageText, setMessageText] = useState('');
@@ -26,30 +34,94 @@ const ChatWindowComponent = () => {
 	const scrollElement: any = useRef(null);
 	const inputElement: any = useRef(null);
 
-	useEffect(() => {
-		setAvatar(toSvg('ex', 100));
-		setMessages([...testMessageData].reverse());
-	}, []);
+	useLiveQuery(async () => {
+		if (selectedChat) {
+			const messageQuery: any = await db.message
+				.where('pubkey')
+				.equals(selectedChat.pubkey)
+				.limit(50)
+				.offset(0)
+				.reverse()
+				.sortBy('date');
+
+			setMessages(messageQuery.reverse());
+		}
+	}, [selectedChat]);
 
 	useEffect(() => {
 		scrollToBottom();
 	}, [messages]);
 
-	const sendMessage = () => {
-		if (messageText !== '') {
-			setMessages([
-				...messages,
-				{
-					text: messageText,
-					sent: true,
-				},
-			]);
+	useEffect(() => {
+		if (selectedChat) {
+			setAvatar(toSvg(selectedChat.pubkey, 100));
 		}
-		setMessageText('');
+	}, []);
 
-		if (inputElement.current) {
-			inputElement.current.focus();
-		}
+	const sendMessage = async (message: any) => {
+		const prism: any = await prismClient.init();
+
+		// Update chat to increase count and modify send key
+		let derivedSenKey = prism.sessionKeyDerivation(
+			selectedChat.sendKey,
+			selectedChat.sendCount + 1
+		);
+		await db.chat.update(selectedChat.pubkey, {
+			sendCount: selectedChat.sendCount + 1,
+		});
+
+		// Perform Encryption
+		let layer1Up = prism.prismEncrypt_Layer1(
+			{
+				message: message,
+			},
+			derivedSenKey
+		);
+		let layer2Up = prism.prismEncrypt_Layer2(
+			'M',
+			selectedChat.sendCount + 1,
+			layer1Up.nonce,
+			layer1Up.cypherText,
+			selectedChat.pubkey
+		);
+		let layer3Up = prism.prismEncrypt_Layer3(
+			layer2Up.nonce,
+			layer2Up.cypherText
+		);
+		let encryptedData = prism.prismEncrypt_Layer4(
+			layer3Up.key,
+			layer3Up.nonce,
+			layer3Up.cypherText,
+			selectedChat.pubkey
+		);
+
+		// Send and save Message
+		await api.post('/message', {
+			to: selectedChat.pubkey,
+			data: encryptedData,
+		});
+
+		await db.message.add({
+			pubkey: selectedChat.pubkey,
+			date: Date.now(),
+			type: 'M',
+			data: message,
+			sent: true,
+		});
+
+		let updatedChatRecord: any = await db.chat
+			.where('pubkey')
+			.equals(selectedChat.pubkey)
+			.first();
+
+		console.log('New Message Sent: ', {
+			to: selectedChat.pubkey,
+			message: message,
+			encryptedData: encryptedData,
+		});
+
+		setSelectedChat(updatedChatRecord);
+		setMessageText('');
 	};
 
 	const scrollToBottom = () => {
@@ -77,7 +149,7 @@ const ChatWindowComponent = () => {
 						/>
 
 						<div className="flex flex-col my-auto">
-							<p>ex</p>
+							<p>{selectedChat?.name || ''}</p>
 						</div>
 					</div>
 					<div className="flex flex-row my-auto space-x-2 mr-5">
@@ -109,14 +181,14 @@ const ChatWindowComponent = () => {
 								if (message.sent) {
 									return (
 										<div key={index}>
-											<SentMessageComponent text={message.text} sent={true} />
+											<SentMessageComponent text={message.data} sent={true} />
 										</div>
 									);
 								}
 								return (
 									<div key={index}>
 										<ReceivedMessageComponent
-											text={message.text}
+											text={message.data}
 											sent={false}
 										/>
 									</div>
@@ -139,16 +211,11 @@ const ChatWindowComponent = () => {
 										value={messageText}
 										onChange={(e) => {
 											setMessageText(e.target.value);
-											// let currentCols =
-											// 	(inputElement.current.scrollHeight - 32) / 24;
-											// console.log(currentCols);
-											// if (currentCols < 3) {
-											// 	setTextAreCols(currentCols + 1);
-											// }
 										}}
-										onKeyUp={(event) => {
+										onKeyDown={(event) => {
 											if (event.key === 'Enter') {
-												sendMessage();
+												event.preventDefault();
+												sendMessage(messageText);
 											}
 										}}
 									></textarea>
@@ -157,7 +224,7 @@ const ChatWindowComponent = () => {
 									<button
 										className="rounded-full bg-gradient-to-r from-[#FF006E] to-[#3A86FF] w-full h-8"
 										onClick={() => {
-											sendMessage();
+											sendMessage(messageText);
 										}}
 									>
 										<MdSend className="mx-auto" />

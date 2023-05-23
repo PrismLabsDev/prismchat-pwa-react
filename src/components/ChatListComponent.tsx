@@ -8,7 +8,6 @@ import {
 	MdSwapHoriz,
 	MdDelete,
 } from 'react-icons/md';
-import testChatData from '../testChatData';
 import { toSvg } from 'jdenticon';
 
 // Context
