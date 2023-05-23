@@ -22,9 +22,9 @@ const OverlayQRComponent = ({ close }: any) => {
 	return (
 		<>
 			<p className="font-bold	text-3xl">QR Identity</p>
-			<p className="font-bold">
+			<div className="font-bold max-w-[300px] flex flex-row mx-auto">
 				<img src={qrUri} alt="Generated QR Public Identity key." />
-			</p>
+			</div>
 			<div className="flex flex-row justify-end space-x-5 border-t-2 border-zinc-800 pt-3">
 				<button
 					onClick={() => {

@@ -20,6 +20,7 @@ const ChatWindowComponent = () => {
 	const [avatar, setAvatar] = useState('');
 	const [openOverlayEdit, setOpenOverlayEdit]: any = useState(false);
 	const [openOverlayDestroy, setOpenOverlayDestroy]: any = useState(false);
+	const [testAreaCols, setTextAreCols] = useState(1);
 
 	const scrollElement: any = useRef(null);
 	const inputElement: any = useRef(null);
@@ -59,9 +60,9 @@ const ChatWindowComponent = () => {
 			{/* h-screen */}
 			<div className="background">
 				<div className="h-16 flex flex-row justify-between bg-zinc-900">
-					<div className="flex flex-row">
+					<div className="flex flex-row pl-2">
 						<button
-							className="px-5 block md:hidden"
+							className="px-3 block md:hidden"
 							onClick={() => {
 								setOnChats(!onChats);
 							}}
@@ -78,7 +79,7 @@ const ChatWindowComponent = () => {
 							<p>ex</p>
 						</div>
 					</div>
-					<div className="flex flex-row my-auto mr-5 space-x-2">
+					<div className="flex flex-row my-auto space-x-2 mr-5">
 						<button
 							onClick={() => {
 								setOpenOverlayEdit(true);
@@ -100,7 +101,7 @@ const ChatWindowComponent = () => {
 						ref={scrollElement}
 						className="flex flex-row overflow-scroll pb-0 overflow-x-hidden"
 					>
-						<div className="basis-10/12 mx-auto">
+						<div className="w-10/12 mx-auto">
 							{messages.map((message: any, index: any) => {
 								if (message.sent) {
 									return (
@@ -122,29 +123,35 @@ const ChatWindowComponent = () => {
 					</div>
 
 					<div className="flex flex-row">
-						<div className="basis-10/12 w-full mx-auto mt-5 mb-10 bg-zinc-900 rounded-full">
-							<div className="flex flex-row my-3 mx-3 space-x-2">
-								<div className="basis-10/12">
-									<input
+						<div className="w-10/12 mx-auto mt-5 mb-10 bg-zinc-900 rounded-[30px]">
+							<div className="flex flex-row m-3 space-x-2">
+								<div className="w-10/12 flex">
+									{/* break-words overflow-y-scroll */}
+									<textarea
 										ref={inputElement}
-										autoFocus
-										className="rounded-full bg-zinc-800 px-3 py-1 w-full outline-none"
+										rows={testAreaCols}
+										className="my-auto resize-none rounded-2xl bg-zinc-800 px-3 py-1 w-full outline-none"
 										placeholder="Aa"
-										type="text"
 										value={messageText}
 										onChange={(e) => {
 											setMessageText(e.target.value);
+											// let currentCols =
+											// 	(inputElement.current.scrollHeight - 32) / 24;
+											// console.log(currentCols);
+											// if (currentCols < 3) {
+											// 	setTextAreCols(currentCols + 1);
+											// }
 										}}
 										onKeyUp={(event) => {
 											if (event.key === 'Enter') {
 												sendMessage();
 											}
 										}}
-									/>
+									></textarea>
 								</div>
-								<div className="basis-2/12 flex flex-row justify-center">
+								<div className="w-2/12 flex flex-col justify-end">
 									<button
-										className="rounded-full bg-gradient-to-r from-[#FF006E] to-[#3A86FF] w-full"
+										className="rounded-full bg-gradient-to-r from-[#FF006E] to-[#3A86FF] w-full h-8"
 										onClick={() => {
 											sendMessage();
 										}}
