@@ -57,7 +57,7 @@ const ChatWindowComponent = () => {
 
 	return (
 		<>
-			{/* h-screen */}
+			{/* Header */}
 			<div className="background">
 				<div className="h-16 flex flex-row justify-between bg-zinc-900">
 					<div className="flex flex-row pl-2">
@@ -96,6 +96,8 @@ const ChatWindowComponent = () => {
 						</button>
 					</div>
 				</div>
+
+				{/* Message List */}
 				<div className="flex flex-col h-[calc(100vh-64px)]">
 					<div
 						ref={scrollElement}
@@ -122,6 +124,7 @@ const ChatWindowComponent = () => {
 						</div>
 					</div>
 
+					{/* Text Area */}
 					<div className="flex flex-row">
 						<div className="w-10/12 mx-auto mt-5 mb-10 bg-zinc-900 rounded-[30px]">
 							<div className="flex flex-row m-3 space-x-2">
