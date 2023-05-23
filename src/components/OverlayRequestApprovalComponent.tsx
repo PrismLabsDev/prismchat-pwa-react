@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { toSvg } from 'jdenticon';
-import { useLiveQuery } from 'dexie-react-hooks';
 import api from '../services/api';
 import { db } from '../services/db';
 import prismClient from '../services/prismClient';

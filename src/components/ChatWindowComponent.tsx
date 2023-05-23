@@ -40,20 +40,30 @@ const ChatWindowComponent = () => {
 	const scrollElement: any = useRef(null);
 	const inputElement: any = useRef(null);
 
+	// Watch for message change in db
+	const messageQuery: any = useLiveQuery(async () => {
+		if (selectedChat) {
+			const res = await db.message
+				.where('pubkey')
+				.equals(selectedChat.pubkey)
+				.limit(50)
+				.offset(0)
+				.sortBy('date');
+
+			return res;
+		} else {
+			return [];
+		}
+	}, [selectedChat]);
+
+	// On message change update state
+	useEffect(() => {
+		setMessages(messageQuery);
+	}, [messageQuery]);
+
 	// Run on selected chat change
 	useEffect(() => {
 		if (selectedChat) {
-			(async function () {
-				const messageQuery: any = await db.message
-					.where('pubkey')
-					.equals(selectedChat.pubkey)
-					.limit(50)
-					.offset(0)
-					.reverse()
-					.sortBy('date');
-
-				setMessages(messageQuery.reverse());
-			})();
 			setAvatar(toSvg(selectedChat.pubkey, 100));
 		}
 	}, [selectedChat]);
