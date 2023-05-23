@@ -20,7 +20,7 @@ const ChatCardComponent = ({ chat }: any) => {
 	// State
 	const [avatar, setAvatar] = useState('');
 	const [selected, setSelected] = useState(false);
-	const [latestMessage, setLatestMessage] = useState('...');
+	const [latestMessage, setLatestMessage] = useState('');
 
 	// Run on selected chat change
 	useEffect(() => {
@@ -43,7 +43,9 @@ const ChatCardComponent = ({ chat }: any) => {
 				.equals(chat.pubkey)
 				.reverse()
 				.first();
-			setLatestMessage(res.data);
+			if (res) {
+				setLatestMessage(res.data);
+			}
 		})();
 	}, [selectedChat, chat]);
 

@@ -11,7 +11,6 @@ const OverlayRequestApprovalComponent = ({ request, close }: any) => {
 	const [requestChatName, setRequestChatName]: any = useState('');
 
 	useEffect(() => {
-		console.log(request);
 		setAvatar(toSvg(request.pubkey, 100));
 	});
 

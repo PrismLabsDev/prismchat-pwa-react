@@ -62,6 +62,7 @@ const OverlayNewChatComponent = ({ close }: any) => {
 
 		setNewChatRecipient('');
 		setNewChatName('');
+		close();
 	};
 
 	return (
