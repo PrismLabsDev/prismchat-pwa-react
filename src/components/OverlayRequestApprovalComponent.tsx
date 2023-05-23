@@ -78,11 +78,11 @@ const OverlayRequestApprovalComponent = ({ request, close }: any) => {
 			<p className="font-bold	text-3xl">Request</p>
 			<div>
 				<img
-					className="p-1 w-20"
+					className="p-1 w-20 mx-auto"
 					src={`data:image/svg+xml;utf8,${encodeURIComponent(avatar)}`}
 					alt="avatar"
 				/>
-				<p>{request.pubkey}</p>
+				<p className="break-words">{request.pubkey}</p>
 			</div>
 			<div>
 				<input

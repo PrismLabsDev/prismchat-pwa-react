@@ -89,6 +89,7 @@ const OverlayExchangeComponent = ({ close }: any) => {
 			<div className="flex flex-col space-y-3">
 				<div className="flex flex-col my-auto space-y-2">
 					<button
+						className="break-words"
 						onClick={() => {
 							navigator.clipboard.writeText(boxPublicKey);
 						}}

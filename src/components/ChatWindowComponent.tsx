@@ -56,7 +56,7 @@ const ChatWindowComponent = () => {
 		if (selectedChat) {
 			setAvatar(toSvg(selectedChat.pubkey, 100));
 		}
-	}, []);
+	}, [selectedChat]);
 
 	const sendMessage = async (message: any) => {
 		const prism: any = await prismClient.init();
@@ -171,7 +171,7 @@ const ChatWindowComponent = () => {
 				</div>
 
 				{/* Message List */}
-				<div className="flex flex-col h-[calc(100vh-64px)]">
+				<div className="flex flex-col h-[calc(100vh-64px)] justify-end">
 					<div
 						ref={scrollElement}
 						className="flex flex-row overflow-scroll pb-0 overflow-x-hidden"
