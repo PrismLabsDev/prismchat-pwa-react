@@ -20,6 +20,7 @@ const ChatCardComponent = ({ chat }: any) => {
 	// State
 	const [avatar, setAvatar] = useState('');
 	const [selected, setSelected] = useState(false);
+	const [latestMessage, setLatestMessage] = useState('...');
 
 	// Run on selected chat change
 	useEffect(() => {
@@ -33,7 +34,17 @@ const ChatCardComponent = ({ chat }: any) => {
 				setSelected(false);
 			}
 		}
+
 		setAvatar(toSvg(chat.pubkey, 100));
+
+		(async function () {
+			const res: any = await db.message
+				.where('pubkey')
+				.equals(chat.pubkey)
+				.reverse()
+				.first();
+			setLatestMessage(res.data);
+		})();
 	}, [selectedChat, chat]);
 
 	return (
@@ -55,7 +66,9 @@ const ChatCardComponent = ({ chat }: any) => {
 					{/* text */}
 					<div className="flex-grow flex flex-col my-auto w-full overflow-hidden">
 						<p className="text-left truncate">{chat.name}</p>
-						<p className="text-left text-sm text-zinc-400 truncate">{'test'}</p>
+						<p className="text-left text-sm text-zinc-400 truncate">
+							{latestMessage}
+						</p>
 					</div>
 					{/* new msg */}
 					<div className="flex-none w-6 m-auto">

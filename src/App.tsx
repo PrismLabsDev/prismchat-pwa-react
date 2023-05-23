@@ -62,9 +62,11 @@ function App() {
 	// Set chat list
 	useEffect(() => {
 		if (chats) {
-			setSelectedChat(chats[0]);
+			if (!selectedChat) {
+				setSelectedChat(chats[0]);
+			}
 		}
-	}, []);
+	}, [chats]);
 
 	const createNewAccount: any = async () => {
 		// Create new account & IdentityKeys
