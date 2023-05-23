@@ -262,9 +262,10 @@ const ChatWindowComponent = () => {
 				</div>
 			</div>
 
-			{/* Overlay QR */}
+			{/* Overlay edit */}
 			<OverlayComponent show={openOverlayEdit}>
 				<OverlayEditChatComponent
+					chat={selectedChat}
 					close={() => {
 						setOpenOverlayEdit(false);
 					}}
