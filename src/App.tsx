@@ -10,9 +10,12 @@ import ChatWindowComponent from './components/ChatWindowComponent';
 import OverlayComponent from './components/OverlayComponent';
 
 function App() {
-	const [onChats, setOnChats] = useState(true);
-	const [openOverlayInit, setOpenOverlayInit] = useState(false);
+	const [chatWindowSelected, setChatWindowSelected] = useState(true);
 	const [identityPublickey, setIdentityPublickey] = useState(null);
+	const [selectedChat, setSelectedChat] = useState(null);
+
+	// Overlay state
+	const [openOverlayInit, setOpenOverlayInit] = useState(false);
 
 	useEffect(() => {
 		(async function () {
@@ -56,7 +59,15 @@ function App() {
 
 	return (
 		<>
-			<AppContext.Provider value={{ onChats, setOnChats, identityPublickey }}>
+			<AppContext.Provider
+				value={{
+					chatWindowSelected,
+					setChatWindowSelected,
+					identityPublickey,
+					selectedChat,
+					setSelectedChat,
+				}}
+			>
 				<div className="bg-zinc-900 h-screen text-white">
 					<main className="h-full">
 						{/* Desktop */}
@@ -70,7 +81,11 @@ function App() {
 						</div>
 						{/* Mobile */}
 						<div className="block md:hidden w-full">
-							{onChats ? <ChatListComponent /> : <ChatWindowComponent />}
+							{chatWindowSelected ? (
+								<ChatListComponent />
+							) : (
+								<ChatWindowComponent />
+							)}
 						</div>
 					</main>
 				</div>

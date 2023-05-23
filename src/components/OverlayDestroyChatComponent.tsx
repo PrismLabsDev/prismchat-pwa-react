@@ -3,7 +3,8 @@ import React, { useEffect, useState, useContext } from 'react';
 import { AppContext } from '../contexts/AppContext';
 
 const OverlayDestroyChatComponent = ({ close }: any) => {
-	const { onChats, setOnChats }: any = useContext(AppContext);
+	const { chatWindowSelected, setChatWindowSelected }: any =
+		useContext(AppContext);
 
 	return (
 		<>

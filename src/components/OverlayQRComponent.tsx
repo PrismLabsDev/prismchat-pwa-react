@@ -4,7 +4,7 @@ import QRCode from 'qrcode';
 import { AppContext } from '../contexts/AppContext';
 
 const OverlayQRComponent = ({ close }: any) => {
-	const { onChats, setOnChats, identityPublickey }: any =
+	const { chatWindowSelected, setChatWindowSelected, identityPublickey }: any =
 		useContext(AppContext);
 
 	const [qrUri, setQrUri] = useState('');

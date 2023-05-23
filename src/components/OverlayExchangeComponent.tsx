@@ -6,7 +6,8 @@ import prismClient from '../services/prismClient';
 import { AppContext } from '../contexts/AppContext';
 
 const OverlayExchangeComponent = ({ close }: any) => {
-	const { onChats, setOnChats }: any = useContext(AppContext);
+	const { chatWindowSelected, setChatWindowSelected }: any =
+		useContext(AppContext);
 
 	const [encryptRecipientKey, setEncryptRecipientKey] = useState('');
 	const [encrypted, setEncrypted] = useState('');

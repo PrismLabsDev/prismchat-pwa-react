@@ -13,7 +13,8 @@ import OverlayEditChatComponent from './OverlayEditChatComponent';
 import OverlayDestroyChatComponent from './OverlayDestroyChatComponent';
 
 const ChatWindowComponent = () => {
-	const { onChats, setOnChats }: any = useContext(AppContext);
+	const { chatWindowSelected, setChatWindowSelected }: any =
+		useContext(AppContext);
 
 	const [messages, setMessages]: any = useState([]);
 	const [messageText, setMessageText] = useState('');
@@ -64,7 +65,7 @@ const ChatWindowComponent = () => {
 						<button
 							className="px-3 block md:hidden"
 							onClick={() => {
-								setOnChats(!onChats);
+								setChatWindowSelected(!chatWindowSelected);
 							}}
 						>
 							<MdChevronLeft />
