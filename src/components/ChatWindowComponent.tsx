@@ -74,6 +74,16 @@ const ChatWindowComponent = () => {
 	}, [messages]);
 
 	const sendMessage = async (message: any) => {
+		// add message to db
+		const newMessageID = await db.message.add({
+			pubkey: selectedChat.pubkey,
+			date: Date.now(),
+			type: 'M',
+			data: message,
+			sent: true,
+		});
+		setMessageText('');
+
 		const prism: any = await prismClient.init();
 
 		// Update chat to increase count and modify send key
@@ -111,32 +121,21 @@ const ChatWindowComponent = () => {
 		);
 
 		// Send and save Message
-		await api.post('/message', {
-			to: selectedChat.pubkey,
-			data: encryptedData,
-		});
-
-		await db.message.add({
-			pubkey: selectedChat.pubkey,
-			date: Date.now(),
-			type: 'M',
-			data: message,
-			sent: true,
-		});
-
-		let updatedChatRecord: any = await db.chat
-			.where('pubkey')
-			.equals(selectedChat.pubkey)
-			.first();
+		api
+			.post('/message', {
+				to: selectedChat.pubkey,
+				data: encryptedData,
+			})
+			.catch(async () => {
+				// If message does not send
+				await db.message.where('id').equals(newMessageID).delete();
+			});
 
 		console.log('New Message Sent: ', {
 			to: selectedChat.pubkey,
 			message: message,
 			encryptedData: encryptedData,
 		});
-
-		setSelectedChat(updatedChatRecord);
-		setMessageText('');
 	};
 
 	const scrollToBottom = () => {
