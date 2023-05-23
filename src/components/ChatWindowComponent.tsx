@@ -275,6 +275,7 @@ const ChatWindowComponent = () => {
 			{/* Overlay Destroy */}
 			<OverlayComponent show={openOverlayDestroy}>
 				<OverlayDestroyChatComponent
+					chat={selectedChat}
 					close={() => {
 						setOpenOverlayDestroy(false);
 					}}
