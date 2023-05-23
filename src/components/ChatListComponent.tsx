@@ -27,7 +27,10 @@ const ChatListComponent = () => {
 	const {
 		chatWindowSelected,
 		setChatWindowSelected,
-		identityPublickey,
+		identityKeys,
+		setIdentityKeys,
+		chats,
+		setChats,
 		selectedChat,
 		setSelectedChat,
 	}: any = useContext(AppContext);
@@ -41,40 +44,31 @@ const ChatListComponent = () => {
 		useState(false);
 
 	// State
-	const [chats, setChats]: any = useState([]);
-	const [showChatList, setShowChatList]: any = useState(true);
-	const [avatar, setAvatar] = useState('');
-	const [selectedRequest, setSelectedRequest]: any = useState(null);
+	const [showChatList, setShowChatList]: any = useState(true); // To toggle chats or request component
+	const [avatar, setAvatar] = useState(''); // Profile avatar
+	const [selectedRequest, setSelectedRequest]: any = useState(null); // The request that is selected for overlay
 
+	// Set avatar when identity keys change
 	useEffect(() => {
-		setAvatar(toSvg(identityPublickey, 100));
-	});
+		if (identityKeys) {
+			setAvatar(toSvg(identityKeys.public, 100));
+		}
+	}, [identityKeys]);
 
+	// Get message requests
 	const requests: any = useLiveQuery(async () => {
 		return await db.request.toArray();
 	});
 
-	useLiveQuery(async () => {
-		const chatQuery: any = await db.chat.toArray();
-		const chatsTest = chatQuery.map((chat: any) => {
-			if (selectedChat !== null) {
-				if (selectedChat.pubkey === chat.pubkey) {
-					chat.newMessage = false;
-				}
-			}
-			return chat;
-		});
+	const selectChat = (chat: any) => {
+		setSelectedChat(chat);
+		setChatWindowSelected(false);
+	};
 
-		setChats(chatsTest);
-	});
-
-	useEffect(() => {
-		if (selectedChat) {
-			db.chat.update(selectedChat.pubkey, {
-				newMessage: false,
-			});
-		}
-	});
+	const selectRequest = (request: any) => {
+		setSelectedRequest(request);
+		setOpenOverlayRequestApproval(true);
+	};
 
 	return (
 		<>
@@ -91,7 +85,7 @@ const ChatListComponent = () => {
 						</button>
 						<button
 							onClick={() => {
-								navigator.clipboard.writeText(identityPublickey);
+								navigator.clipboard.writeText(identityKeys.public);
 							}}
 						>
 							<MdOutlineKey />
@@ -129,7 +123,7 @@ const ChatListComponent = () => {
 						<div className="mx-auto p-5">
 							<button
 								onClick={() => {
-									navigator.clipboard.writeText(identityPublickey);
+									navigator.clipboard.writeText(identityKeys.public);
 								}}
 							>
 								<img
@@ -168,13 +162,12 @@ const ChatListComponent = () => {
 						{showChatList ? (
 							// chats
 							<div className="flex flex-col space-y-2 p-2">
-								{chats.map((chat: any, index: any) => {
+								{chats?.map((chat: any, index: any) => {
 									return (
 										<button
 											key={index}
 											onClick={() => {
-												setSelectedChat(chat);
-												setChatWindowSelected(false);
+												selectChat(chat);
 											}}
 										>
 											<ChatCardComponent chat={chat} />
@@ -190,8 +183,7 @@ const ChatListComponent = () => {
 										<button
 											key={index}
 											onClick={() => {
-												setSelectedRequest(request);
-												setOpenOverlayRequestApproval(true);
+												selectRequest(request);
 											}}
 										>
 											<RequestCardComponent request={request} />

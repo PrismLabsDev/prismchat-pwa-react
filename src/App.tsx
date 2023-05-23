@@ -11,12 +11,14 @@ import OverlayComponent from './components/OverlayComponent';
 
 function App() {
 	const [chatWindowSelected, setChatWindowSelected] = useState(true);
-	const [identityPublickey, setIdentityPublickey] = useState(null);
-	const [selectedChat, setSelectedChat] = useState(null);
+	const [identityKeys, setIdentityKeys] = useState(null);
+	const [chats, setChats] = useState(null);
+	const [selectedChat, setSelectedChat]: any = useState(null);
 
 	// Overlay state
 	const [openOverlayInit, setOpenOverlayInit] = useState(false);
 
+	// Set identity keys
 	useEffect(() => {
 		(async function () {
 			let identityKeysCheck = await db.general
@@ -27,10 +29,30 @@ function App() {
 			if (!identityKeysCheck) {
 				setOpenOverlayInit(true);
 			} else {
-				setIdentityPublickey(identityKeysCheck.value.public);
+				setIdentityKeys(identityKeysCheck.value);
 			}
 		})();
-	});
+	}, []);
+
+	// Set chat list
+	useEffect(() => {
+		(async function () {
+			const chatQuery: any = await db.chat.toArray();
+			if (chatQuery) {
+				const chatList = chatQuery.map((chat: any) => {
+					if (selectedChat !== null) {
+						if (selectedChat.pubkey === chat.pubkey) {
+							chat.newMessage = false;
+						}
+					}
+					return chat;
+				});
+
+				setChats(chatList);
+				setSelectedChat(chatList[0]);
+			}
+		})();
+	}, []);
 
 	const createNewAccount: any = async () => {
 		// Create new account & IdentityKeys
@@ -39,6 +61,8 @@ function App() {
 			name: 'IdentityKeys',
 			value: prism.IdentityKeys,
 		});
+
+		setIdentityKeys(prism.IdentityKeys);
 
 		// Create new box keys
 		const prismBox: any = await prismClient.init();
@@ -63,7 +87,10 @@ function App() {
 				value={{
 					chatWindowSelected,
 					setChatWindowSelected,
-					identityPublickey,
+					identityKeys,
+					setIdentityKeys,
+					chats,
+					setChats,
 					selectedChat,
 					setSelectedChat,
 				}}
@@ -89,6 +116,8 @@ function App() {
 						</div>
 					</main>
 				</div>
+
+				{/* New account overlay */}
 				<OverlayComponent show={openOverlayInit}>
 					<p className="font-bold	text-3xl">Setup</p>
 					<p>

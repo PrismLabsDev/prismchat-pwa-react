@@ -5,26 +5,11 @@ import { toSvg } from 'jdenticon';
 import { AppContext } from '../contexts/AppContext';
 
 const RequestCardComponent = ({ request }: any) => {
-	const {
-		chatWindowSelected,
-		setChatWindowSelected,
-		identityPublickey,
-		selectedChat,
-		setSelectedChat,
-	}: any = useContext(AppContext);
-
 	const [avatar, setAvatar] = useState('');
-	const [selected, setSelected] = useState(false);
 
 	useEffect(() => {
-		console.log(request);
-		// if (selectedChat) {
-		// 	if (selectedChat.pubkey === chat.pubkey) {
-		// 		setSelected(true);
-		// 	}
-		// }
 		setAvatar(toSvg(request.pubkey, 100));
-	});
+	}, [request]);
 
 	return (
 		<>
@@ -39,13 +24,7 @@ const RequestCardComponent = ({ request }: any) => {
 					</div>
 					<div className="flex-grow flex flex-col my-auto w-full overflow-hidden">
 						<p className="text-left truncate">{request.pubkey}</p>
-						{/* <p className="text-left text-sm text-zinc-400 truncate">{'test'}</p> */}
 					</div>
-					{/* <div className="flex-none w-6 m-auto">
-						{chat.newMessage && (
-							<span className="block bg-gradient-to-b from-[#FF006E] to-[#3A86FF] rounded-full w-4 h-4"></span>
-						)}
-					</div> */}
 				</div>
 			</div>
 		</>

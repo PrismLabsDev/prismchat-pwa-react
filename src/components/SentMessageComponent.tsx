@@ -5,7 +5,7 @@ interface PropsObj {
 	sent: boolean;
 }
 
-const SentMessageComponent = ({ text, sent }: PropsObj) => {
+const SentMessageComponent = ({ text }: PropsObj) => {
 	return (
 		<>
 			<div className="flex flex-row justify-end">

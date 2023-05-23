@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
+import { db } from '../services/db';
 import { toSvg } from 'jdenticon';
 
 // Context
@@ -8,26 +9,35 @@ const ChatCardComponent = ({ chat }: any) => {
 	const {
 		chatWindowSelected,
 		setChatWindowSelected,
-		identityPublickey,
+		identityKeys,
+		setIdentityKeys,
+		chats,
+		setChats,
 		selectedChat,
 		setSelectedChat,
 	}: any = useContext(AppContext);
 
+	// State
 	const [avatar, setAvatar] = useState('');
 	const [selected, setSelected] = useState(false);
 
+	// Run on selected chat change
 	useEffect(() => {
 		if (selectedChat) {
 			if (selectedChat.pubkey === chat.pubkey) {
 				setSelected(true);
+				db.chat.update(selectedChat.pubkey, {
+					newMessage: false,
+				});
+			} else {
+				setSelected(false);
 			}
 		}
 		setAvatar(toSvg(chat.pubkey, 100));
-	});
+	}, [selectedChat, chat]);
 
 	return (
 		<>
-			{' '}
 			<div
 				className={`${
 					selected ? 'outline outline-zinc-600' : ''
