@@ -199,7 +199,7 @@ const ChatWindowComponent = () => {
 								className="flex flex-row overflow-scroll pb-0 overflow-x-hidden"
 							>
 								<div className="w-10/12 mx-auto">
-									{messages.map((message: any, index: any) => {
+									{messages?.map((message: any, index: any) => {
 										if (message.sent) {
 											return (
 												<div key={index}>

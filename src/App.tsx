@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AppContext } from './contexts/AppContext';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from './services/db';
 import authUtil from './services/authUtil';
 import prismClient from './services/prismClient';
@@ -17,6 +18,30 @@ function App() {
 
 	// Overlay state
 	const [openOverlayInit, setOpenOverlayInit] = useState(false);
+
+	// Watch for message change in db
+	const chatsQuery: any = useLiveQuery(async () => {
+		const chatQuery: any = await db.chat.toArray();
+		if (chatQuery) {
+			const chatList = chatQuery.map((chat: any) => {
+				if (selectedChat !== null) {
+					if (selectedChat.pubkey === chat.pubkey) {
+						chat.newMessage = false;
+					}
+				}
+				return chat;
+			});
+
+			return chatList;
+		} else {
+			return [];
+		}
+	});
+
+	// On message change update state
+	useEffect(() => {
+		setChats(chatsQuery);
+	}, [chatsQuery]);
 
 	// Set identity keys
 	useEffect(() => {
@@ -36,22 +61,9 @@ function App() {
 
 	// Set chat list
 	useEffect(() => {
-		(async function () {
-			const chatQuery: any = await db.chat.toArray();
-			if (chatQuery) {
-				const chatList = chatQuery.map((chat: any) => {
-					if (selectedChat !== null) {
-						if (selectedChat.pubkey === chat.pubkey) {
-							chat.newMessage = false;
-						}
-					}
-					return chat;
-				});
-
-				setChats(chatList);
-				setSelectedChat(chatList[0]);
-			}
-		})();
+		if (chats) {
+			setSelectedChat(chats[0]);
+		}
 	}, []);
 
 	const createNewAccount: any = async () => {
