@@ -69,7 +69,7 @@ const ChatCardComponent = ({ chat }: any) => {
 					<div className="flex-grow flex flex-col my-auto w-full overflow-hidden">
 						<p className="text-left truncate">{chat.name}</p>
 						<p className="text-left text-sm text-zinc-400 truncate">
-							{latestMessage}
+							{chat.receiveKey ? latestMessage : <i>requested</i>}
 						</p>
 					</div>
 					{/* new msg */}

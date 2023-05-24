@@ -149,7 +149,7 @@ const ChatWindowComponent = () => {
 			{/* Header */}
 			<div className="background">
 				<div className="h-16 flex flex-row justify-between bg-zinc-900">
-					{selectedChat && (
+					{selectedChat && selectedChat?.receiveKey ? (
 						<>
 							<div className="flex flex-row pl-2">
 								<button
@@ -187,12 +187,14 @@ const ChatWindowComponent = () => {
 								</button>
 							</div>
 						</>
+					) : (
+						<></>
 					)}
 				</div>
 
 				{/* Message List */}
 				<div className="flex flex-col h-[calc(100vh-64px)] justify-end">
-					{selectedChat && (
+					{selectedChat && selectedChat?.receiveKey ? (
 						<>
 							<div
 								ref={scrollElement}
@@ -258,6 +260,8 @@ const ChatWindowComponent = () => {
 								</div>
 							</div>
 						</>
+					) : (
+						<></>
 					)}
 				</div>
 			</div>
