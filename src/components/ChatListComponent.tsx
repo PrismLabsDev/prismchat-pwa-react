@@ -134,7 +134,11 @@ const ChatListComponent = () => {
 							</button>
 						</div>
 						<div className="flex flex-row mb-3">
-							<div className="w-1/2 w-full">
+							<div
+								className={`${
+									showChatList ? 'border-b-2 border-zinc-300' : ''
+								} w-1/2 w-full pb-2`}
+							>
 								<button
 									className="w-full"
 									onClick={() => {
@@ -144,7 +148,11 @@ const ChatListComponent = () => {
 									Chats
 								</button>
 							</div>
-							<div className="w-1/2 w-full">
+							<div
+								className={`${
+									showChatList ? '' : 'border-b-2	border-zinc-300'
+								} w-1/2 w-full pb-2`}
+							>
 								<button
 									className="w-full"
 									onClick={() => {
