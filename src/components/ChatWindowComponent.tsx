@@ -46,11 +46,12 @@ const ChatWindowComponent = () => {
 			const res = await db.message
 				.where('pubkey')
 				.equals(selectedChat.pubkey)
+				.reverse()
 				.limit(50)
 				.offset(0)
 				.sortBy('date');
 
-			return res;
+			return res.reverse();
 		} else {
 			return [];
 		}
