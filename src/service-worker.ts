@@ -1,6 +1,9 @@
 /// <reference lib="webworker" />
 /* eslint-disable no-restricted-globals */
 
+import { db } from './services/db';
+import { messageUtils } from './services/messageUtils';
+
 // This service worker can be customized!
 // See https://developers.google.com/web/tools/workbox/modules
 // for the list of available Workbox modules, or add any other
@@ -29,52 +32,77 @@ precacheAndRoute(self.__WB_MANIFEST);
 // https://developers.google.com/web/fundamentals/architecture/app-shell
 const fileExtensionRegexp = new RegExp('/[^/?]+\\.[^/]+$');
 registerRoute(
-  // Return false to exempt requests from being fulfilled by index.html.
-  ({ request, url }: { request: Request; url: URL }) => {
-    // If this isn't a navigation, skip.
-    if (request.mode !== 'navigate') {
-      return false;
-    }
+	// Return false to exempt requests from being fulfilled by index.html.
+	({ request, url }: { request: Request; url: URL }) => {
+		// If this isn't a navigation, skip.
+		if (request.mode !== 'navigate') {
+			return false;
+		}
 
-    // If this is a URL that starts with /_, skip.
-    if (url.pathname.startsWith('/_')) {
-      return false;
-    }
+		// If this is a URL that starts with /_, skip.
+		if (url.pathname.startsWith('/_')) {
+			return false;
+		}
 
-    // If this looks like a URL for a resource, because it contains
-    // a file extension, skip.
-    if (url.pathname.match(fileExtensionRegexp)) {
-      return false;
-    }
+		// If this looks like a URL for a resource, because it contains
+		// a file extension, skip.
+		if (url.pathname.match(fileExtensionRegexp)) {
+			return false;
+		}
 
-    // Return true to signal that we want to use the handler.
-    return true;
-  },
-  createHandlerBoundToURL(process.env.PUBLIC_URL + '/index.html')
+		// Return true to signal that we want to use the handler.
+		return true;
+	},
+	createHandlerBoundToURL(process.env.PUBLIC_URL + '/index.html')
 );
 
 // An example runtime caching route for requests that aren't handled by the
 // precache, in this case same-origin .png requests like those from in public/
 registerRoute(
-  // Add in any other file extensions or routing criteria as needed.
-  ({ url }) => url.origin === self.location.origin && url.pathname.endsWith('.png'),
-  // Customize this strategy as needed, e.g., by changing to CacheFirst.
-  new StaleWhileRevalidate({
-    cacheName: 'images',
-    plugins: [
-      // Ensure that once this runtime cache reaches a maximum size the
-      // least-recently used images are removed.
-      new ExpirationPlugin({ maxEntries: 50 }),
-    ],
-  })
+	// Add in any other file extensions or routing criteria as needed.
+	({ url }) =>
+		url.origin === self.location.origin && url.pathname.endsWith('.png'),
+	// Customize this strategy as needed, e.g., by changing to CacheFirst.
+	new StaleWhileRevalidate({
+		cacheName: 'images',
+		plugins: [
+			// Ensure that once this runtime cache reaches a maximum size the
+			// least-recently used images are removed.
+			new ExpirationPlugin({ maxEntries: 50 }),
+		],
+	})
 );
 
 // This allows the web app to trigger skipWaiting via
 // registration.waiting.postMessage({type: 'SKIP_WAITING'})
 self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
+	if (event.data && event.data.type === 'SKIP_WAITING') {
+		self.skipWaiting();
+	}
 });
 
 // Any other custom service worker logic can go here.
+
+self.addEventListener('push', async (event) => {
+	const data = JSON.parse(event.data?.text() || '');
+
+	// Trigger event in webapp
+	self.clients.matchAll().then((clients) => {
+		clients.forEach((client) => {
+			client.postMessage({
+				type: 'pushNotification',
+				payload: data,
+			});
+		});
+	});
+
+	// Create push notification
+	if (data.type === 'M') {
+		await event.waitUntil(
+			self.registration.showNotification('New Message!', {
+				body: 'A new message has been sent to you, open the application to decrypt.',
+				icon: '%PUBLIC_URL%/favicon.ico',
+			})
+		);
+	}
+});

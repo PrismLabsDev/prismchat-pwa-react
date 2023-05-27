@@ -5,6 +5,7 @@ import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
+import api from './services/api';
 
 import { db } from './services/db';
 import authUtil from './services/authUtil';
@@ -13,6 +14,31 @@ import { messageUtils } from './services/messageUtils';
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement
 );
+
+const registerNotifications = () => {
+	navigator.serviceWorker.ready.then(async (registration) => {
+		let subscription = await registration.pushManager.getSubscription();
+		if (subscription === null) {
+			subscription = await registration.pushManager.subscribe({
+				userVisibleOnly: true,
+				applicationServerKey:
+					'BFkzzEXLYpaxhxRu97TtNHKUJ56b6cTBo25dXnBmEjIgJqMi-ccU2sf2gKF18SbSw8DBzkjssECCdXJvfWLmoyo',
+			});
+		}
+		api.post('/push/subscribe', subscription);
+	});
+};
+
+const getMessage = async () => {
+	let identityKeysCheck = await db.general
+		.where('name')
+		.equals('IdentityKeys')
+		.first();
+
+	if (identityKeysCheck) {
+		await messageUtils.get();
+	}
+};
 
 (async function () {
 	let identityKeysCheck = await db.general
@@ -30,17 +56,36 @@ const root = ReactDOM.createRoot(
 		await messageUtils.get();
 	}
 
-	// Ping messages
-	setInterval(async () => {
-		let identityKeysCheck = await db.general
-			.where('name')
-			.equals('IdentityKeys')
-			.first();
+	await getMessage();
 
-		if (identityKeysCheck) {
-			await messageUtils.get();
+	navigator.serviceWorker.addEventListener('message', (event) => {
+		if (event.data.type === 'pushNotification') {
+			const payload = event.data.payload;
+			if (payload.type === 'M') {
+				(async function () {
+					await getMessage();
+				})();
+			}
 		}
-	}, 10000);
+	});
+
+	// Request permissions for notification
+	if (!('Notification' in window)) {
+		// Check if the browser supports notifications
+		alert('This browser does not support desktop notification');
+	} else if (Notification.permission === 'granted') {
+		// Check whether notification permissions have already been granted;
+		// if so, create a notification
+		registerNotifications();
+	} else if (Notification.permission !== 'denied') {
+		// We need to ask the user for permission
+		Notification.requestPermission().then((permission) => {
+			// If the user accepts, let's create a notification
+			if (permission === 'granted') {
+				registerNotifications();
+			}
+		});
+	}
 })();
 
 root.render(
