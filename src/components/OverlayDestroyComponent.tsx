@@ -1,17 +1,9 @@
-import React, { useEffect, useState, useContext } from 'react';
-
-import { AppContext } from '../contexts/AppContext';
-
 const OverlayDestroyComponent = ({ close }: any) => {
-	const { chatWindowSelected, setChatWindowSelected }: any =
-		useContext(AppContext);
-
 	const selfDestruct = async () => {
 		localStorage.removeItem('access_token');
 
-		await window.indexedDB.databases().then((r: any) => {
-			for (var i = 0; i < r.length; i++)
-				window.indexedDB.deleteDatabase(r[i].name);
+		await indexedDB.databases().then((r: any) => {
+			for (var i = 0; i < r.length; i++) indexedDB.deleteDatabase(r[i].name);
 		});
 
 		window.location.reload();
