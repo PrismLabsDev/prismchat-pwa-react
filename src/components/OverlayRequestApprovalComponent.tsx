@@ -1,12 +1,31 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { toSvg } from 'jdenticon';
-import api from '../services/api';
+import apiUtil from '../services/apiUtil';
 import { db } from '../services/db';
 import prismClient from '../services/prismClient';
 
 import { AppContext } from '../contexts/AppContext';
 
 const OverlayRequestApprovalComponent = ({ request, close }: any) => {
+  const { 					
+    chatWindowSelected,
+    setChatWindowSelected,
+    accessToken,
+    setAccessToken,
+    identityKeys,
+    setIdentityKeys,
+    server,
+    setServer,
+    boxKeys,
+    setBoxKeys,
+    chats,
+    setChats,
+    selectedChat,
+    setSelectedChat, }: any =
+	useContext(AppContext);
+
+  const api = apiUtil.init(server?.host, accessToken);
+
 	const [avatar, setAvatar] = useState('');
 	const [requestChatName, setRequestChatName]: any = useState('');
 

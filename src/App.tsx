@@ -3,21 +3,61 @@ import { AppContext } from './contexts/AppContext';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from './services/db';
 import authUtil from './services/authUtil';
-import prismClient from './services/prismClient';
+import {messageUtils} from './services/messageUtils'
+import apiUtil from './services/apiUtil'
 
 // Components
 import ChatListComponent from './components/ChatListComponent';
 import ChatWindowComponent from './components/ChatWindowComponent';
 import OverlayComponent from './components/OverlayComponent';
+import OverlayInitComponent from './components/OverlayInitComponent';
 
 function App() {
+  // State (App context)
 	const [chatWindowSelected, setChatWindowSelected] = useState(true);
-	const [identityKeys, setIdentityKeys] = useState(null);
+  const [accessToken, setAccessToken] = useState(null);
+	const [identityKeys, _setIdentityKeys]: any = useState(null);
+  const [server, _setServer]: any = useState(null);
+  const [boxKeys, _setBoxKeys]: any = useState(null);
 	const [chats, setChats] = useState(null);
 	const [selectedChat, setSelectedChat]: any = useState(null);
 
-	// Overlay state
-	const [openOverlayInit, setOpenOverlayInit] = useState(false);
+  // Overlay state
+  const [initialized, setInitialized] = useState(false);
+  const [openOverlayInit, setOpenOverlayInit] = useState(false);
+
+  const setIdentityKeys = async (data: any) => {
+    const query = await db.general.put({
+      name: 'IdentityKeys',
+			value: data,
+		});
+
+    if(query){
+      _setIdentityKeys(data);
+    }
+  }
+
+  const setServer = async (data: any) => {
+    const query = await db.general.put({
+      name: 'Server',
+			value: data,
+		});
+
+    if(query){
+      _setServer(data);
+    }
+  }
+
+  const setBoxKeys = async (data: any) => {
+    const query = await db.general.put({
+      name: 'BoxKeys',
+			value: data,
+		});
+
+    if(query){
+      _setBoxKeys(data);
+    }
+  }
 
 	// Watch for message change in db
 	const chatsQuery: any = useLiveQuery(async () => {
@@ -41,59 +81,94 @@ function App() {
 	// On message change update state
 	useEffect(() => {
 		setChats(chatsQuery);
-	}, [chatsQuery]);
-
-	// Set identity keys
-	useEffect(() => {
-		(async function () {
-			let identityKeysCheck = await db.general
-				.where('name')
-				.equals('IdentityKeys')
-				.first();
-
-			if (!identityKeysCheck) {
-				setOpenOverlayInit(true);
-			} else {
-				setIdentityKeys(identityKeysCheck.value);
-			}
-		})();
-	}, []);
-
-	// Set chat list
-	useEffect(() => {
-		if (chats) {
+    if (chats) {
 			if (!selectedChat) {
 				setSelectedChat(chats[0]);
 			}
 		}
-	}, [chats]);
+	}, [chatsQuery]);
 
-	const createNewAccount: any = async () => {
-		// Create new account & IdentityKeys
-		const prism: any = await prismClient.init();
-		await db.general.add({
-			name: 'IdentityKeys',
-			value: prism.IdentityKeys,
-		});
+  const registerNotifications = (baseURL: string, accessToken: string, vapid: string) => {
+    const api = apiUtil.init(baseURL, accessToken);
+    navigator.serviceWorker.ready.then(async (registration) => {
+      let subscription = await registration.pushManager.getSubscription();
+      if (subscription === null) {
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: vapid,
+        });
+      }
+      console.log(subscription);
+      api.post('/push/subscribe', subscription);
+    });
 
-		setIdentityKeys(prism.IdentityKeys);
+    navigator.serviceWorker.addEventListener('message', (event) => {
+      if (event.data.type === 'pushNotification') {
+        const payload = event.data.payload;
+        if (payload.type === 'M') {
+          (async function () {
+            await messageUtils.get(baseURL, accessToken);
+          })();
+        }
+      }
+    });
+  };
 
-		// Create new box keys
-		const prismBox: any = await prismClient.init();
-		const generatedBoxKeys = prismBox.generateIdentityKeys();
-		await db.general.add({
-			name: 'BoxKeys',
-			value: generatedBoxKeys,
-		});
+	// Effect on first open
+	useEffect(() => {
+		(async function () {
+      // Check Identity keys
+      let identityKeysCheck: any = await db.general
+      .where('name')
+      .equals('IdentityKeys')
+      .first();
 
-		// Authenticate
-		const { cypherText, nonce } = await authUtil.request();
-		const access_token = await authUtil.verify(cypherText, nonce);
-		localStorage.setItem('access_token', access_token);
+      // Check Server
+      let serverCheck: any = await db.general
+      .where('name')
+      .equals('Server')
+      .first();
 
-		// Close creation dialogue
-		setOpenOverlayInit(false);
-	};
+      // Check Box keys
+      let boxKeysCheck: any = await db.general
+      .where('name')
+      .equals('BoxKeys')
+      .first();
+
+      if(identityKeysCheck && serverCheck && boxKeysCheck){
+        _setIdentityKeys(identityKeysCheck.value);
+        _setServer(serverCheck.value);
+        _setBoxKeys(boxKeysCheck.value);
+
+        // Authenticate to server
+        const { cypherText, nonce } = await authUtil.request(serverCheck.value.host);
+        const _accessToken = await authUtil.verify(cypherText, nonce, serverCheck.value.host);
+        setAccessToken(_accessToken);
+
+        // Get messages
+        if(_accessToken){
+          await messageUtils.get(serverCheck.value.host, _accessToken);
+
+          // Request notifications permission from browser
+          if (!('Notification' in window)) {
+            alert('This browser does not support desktop notification');
+          } else if (Notification.permission === 'granted') {
+            registerNotifications(serverCheck.value.host, _accessToken, serverCheck.value.keys.vapid);
+          } else if (Notification.permission !== 'denied') {
+            Notification.requestPermission().then((permission) => {
+              if (permission === 'granted') {
+                registerNotifications(serverCheck.value.host, _accessToken, serverCheck.value.keys.vapid);
+              }
+            });
+          }
+
+          setInitialized(true);
+        }
+      } else {
+        setOpenOverlayInit(true);
+      }
+		})();
+	}, [initialized]);
 
 	return (
 		<>
@@ -101,8 +176,14 @@ function App() {
 				value={{
 					chatWindowSelected,
 					setChatWindowSelected,
+          accessToken,
+          setAccessToken,
 					identityKeys,
 					setIdentityKeys,
+          server,
+          setServer,
+          boxKeys,
+          setBoxKeys,
 					chats,
 					setChats,
 					selectedChat,
@@ -131,34 +212,15 @@ function App() {
 					</main>
 				</div>
 
-				{/* New account overlay */}
-				<OverlayComponent show={openOverlayInit}>
-					<p className="font-bold	text-3xl">Setup</p>
-					<p>
-						We did not find any Prism keys in this browser. Do we have your
-						permission to generate keys for you to start using the Prism Chat
-						service?
-					</p>
-					<p className="font-bold">
-						This application is for demonstration purposes ONLY!
-					</p>
-					<div className="flex flex-row justify-end space-x-5 border-t-2 border-zinc-800 pt-3">
-						<button
-							onClick={() => {
-								createNewAccount();
-							}}
-						>
-							Accept
-						</button>
-						<button
-							onClick={() => {
-								setOpenOverlayInit(false);
-							}}
-						>
-							Close
-						</button>
-					</div>
-				</OverlayComponent>
+        {/* Overlay Init */}
+        <OverlayComponent show={openOverlayInit}>
+          <OverlayInitComponent
+            close={() => {
+              setOpenOverlayInit(false);
+              setInitialized(true);
+            }}
+          />
+        </OverlayComponent>
 			</AppContext.Provider>
 		</>
 	);

@@ -1,8 +1,9 @@
 import { db } from './db';
-import api from './api';
+import apiUtil from './apiUtil';
 import prismClient from './prismClient';
 
-const get = async () => {
+const get = async (baseURL: string, accessToken: string) => {
+  const api = apiUtil.init(baseURL, accessToken);
 	const prism: any = await prismClient.init();
 	const newChats = await api.get('/message');
 

@@ -1,13 +1,29 @@
 import React, { useEffect, useState, useContext } from 'react';
-import api from '../services/api';
+import apiUtil from '../services/apiUtil';
 import { db } from '../services/db';
 import prismClient from '../services/prismClient';
 
 import { AppContext } from '../contexts/AppContext';
 
 const OverlayNewChatComponent = ({ close }: any) => {
-	const { chatWindowSelected, setChatWindowSelected }: any =
-		useContext(AppContext);
+	const { 					
+    chatWindowSelected,
+    setChatWindowSelected,
+    accessToken,
+    setAccessToken,
+    identityKeys,
+    setIdentityKeys,
+    server,
+    setServer,
+    boxKeys,
+    setBoxKeys,
+    chats,
+    setChats,
+    selectedChat,
+    setSelectedChat, }: any =
+	useContext(AppContext);
+
+  const api = apiUtil.init(server?.host, accessToken);
 
 	const [newChatRecipient, setNewChatRecipient] = useState('');
 	const [newChatName, setNewChatName] = useState('');

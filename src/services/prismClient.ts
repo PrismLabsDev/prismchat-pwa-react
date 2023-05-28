@@ -7,18 +7,18 @@ const init: any = async (pubKey?: any, prvKey?: any) => {
 		.equals('IdentityKeys')
 		.first();
 
-	if (pubKey && prvKey) {
+	if (pubKey && prvKey) { // If keys given to function
 		const prism: Prism = new Prism(pubKey, prvKey);
 		await prism.init();
 		return prism;
-	} else if (identityKeys) {
+	} else if (identityKeys) { // If keys are found in db
 		const prism: Prism = new Prism(
 			identityKeys.value.public,
 			identityKeys.value.private
 		);
 		await prism.init();
 		return prism;
-	} else {
+	} else { // If no keys given and no keys
 		const prism: Prism = new Prism();
 		await prism.init();
 		prism.generateIdentityKeys();
@@ -27,7 +27,7 @@ const init: any = async (pubKey?: any, prvKey?: any) => {
 };
 
 const exportObj = {
-	init: init,
+	init,
 };
 
 export default exportObj;

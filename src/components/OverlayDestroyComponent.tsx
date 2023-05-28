@@ -1,9 +1,6 @@
 const OverlayDestroyComponent = ({ close }: any) => {
 	const selfDestruct = async () => {
-		localStorage.removeItem('access_token');
-
 		indexedDB.deleteDatabase('PrismChatPWA');
-
 		window.location.reload();
 	};
 

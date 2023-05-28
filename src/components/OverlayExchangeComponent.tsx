@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { db } from '../services/db';
-import authUtil from '../services/authUtil';
 import prismClient from '../services/prismClient';
 
 import { AppContext } from '../contexts/AppContext';

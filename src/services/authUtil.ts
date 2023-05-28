@@ -1,7 +1,9 @@
-import api from './api';
+import apiUtil from './apiUtil';
 import prismClient from './prismClient';
 
-const request = async () => {
+const request = async (baseURL: string) => {
+  const api = apiUtil.init(baseURL, null);
+
 	const prism: any = await prismClient.init();
 
 	const response = await api.post('/auth/request', {
@@ -24,7 +26,8 @@ const request = async () => {
 	};
 };
 
-const verify = async (cypherText: any, nonce: any) => {
+const verify = async (cypherText: any, nonce: any, baseURL: string) => {
+  const api = apiUtil.init(baseURL, null);
 	const prism: any = await prismClient.init();
 
 	const response = await api.post('/auth/verify', {

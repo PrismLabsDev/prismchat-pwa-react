@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../services/db';
-import api from '../services/api';
+import apiUtil from '../services/apiUtil';
 import prismClient from '../services/prismClient';
 import { MdSend, MdDelete, MdModeEdit, MdChevronLeft } from 'react-icons/md';
 import { toSvg } from 'jdenticon';
@@ -16,16 +16,24 @@ import OverlayEditChatComponent from './OverlayEditChatComponent';
 import OverlayDestroyChatComponent from './OverlayDestroyChatComponent';
 
 const ChatWindowComponent = () => {
-	const {
-		chatWindowSelected,
-		setChatWindowSelected,
-		identityKeys,
-		setIdentityKeys,
-		chats,
-		setChats,
-		selectedChat,
-		setSelectedChat,
-	}: any = useContext(AppContext);
+	const { 					
+    chatWindowSelected,
+    setChatWindowSelected,
+    accessToken,
+    setAccessToken,
+    identityKeys,
+    setIdentityKeys,
+    server,
+    setServer,
+    boxKeys,
+    setBoxKeys,
+    chats,
+    setChats,
+    selectedChat,
+    setSelectedChat, }: any =
+	useContext(AppContext);
+
+  const api = apiUtil.init(server?.host, accessToken);
 
 	// State
 	const [messages, setMessages]: any = useState([]);
