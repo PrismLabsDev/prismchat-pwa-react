@@ -3,7 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../services/db';
 import apiUtil from '../services/apiUtil';
 import prismClient from '../services/prismClient';
-import { MdSend, MdDelete, MdModeEdit, MdChevronLeft } from 'react-icons/md';
+import { MdSend, MdDelete, MdModeEdit, MdChevronLeft, MdCall, MdVideocam } from 'react-icons/md';
 import { toSvg } from 'jdenticon';
 
 import { AppContext } from '../contexts/AppContext';
@@ -14,6 +14,8 @@ import SentMessageComponent from './SentMessageComponent';
 import OverlayComponent from './OverlayComponent';
 import OverlayEditChatComponent from './OverlayEditChatComponent';
 import OverlayDestroyChatComponent from './OverlayDestroyChatComponent';
+import OverlayVoiceCallComponent from './OverlayVoiceCallComponent';
+import OverlayVideoCallComponent from './OverlayVideoCallComponent';
 
 const ChatWindowComponent = () => {
 	const { 					
@@ -43,6 +45,8 @@ const ChatWindowComponent = () => {
 	// State overlay
 	const [openOverlayEdit, setOpenOverlayEdit]: any = useState(false);
 	const [openOverlayDestroy, setOpenOverlayDestroy]: any = useState(false);
+  const [openOverlayVoiceCall, setOpenOverlayVoiceCall]: any = useState(false);
+  const [openOverlayVideoCall, setOpenOverlayVideoCall]: any = useState(false);
 
 	// Refs
 	const scrollElement: any = useRef(null);
@@ -158,47 +162,72 @@ const ChatWindowComponent = () => {
 			{/* Header */}
 			<div className="background">
 				<div className="h-16 flex flex-row justify-between bg-zinc-900">
-					{selectedChat && selectedChat?.receiveKey ? (
-						<>
-							<div className="flex flex-row pl-2">
-								<button
-									className="px-3 block md:hidden"
-									onClick={() => {
-										setChatWindowSelected(!chatWindowSelected);
-									}}
-								>
-									<MdChevronLeft />
-								</button>
-								<img
-									className="p-1 mr-2 w-12"
-									src={`data:image/svg+xml;utf8,${encodeURIComponent(avatar)}`}
-									alt="avatar"
-								/>
+          {selectedChat ? (
+            <>
+              <div className="flex flex-row pl-2">
+                <button
+                  className="px-3 block md:hidden"
+                  onClick={() => {
+                    setChatWindowSelected(!chatWindowSelected);
+                  }}
+                >
+                  <MdChevronLeft />
+                </button>
+                <img
+                  className="p-1 mr-2 w-12"
+                  src={`data:image/svg+xml;utf8,${encodeURIComponent(avatar)}`}
+                  alt="avatar"
+                />
 
-								<div className="flex flex-col my-auto">
-									<p>{selectedChat?.name || ''}</p>
-								</div>
-							</div>
-							<div className="flex flex-row my-auto space-x-2 mr-5">
-								<button
-									onClick={() => {
-										setOpenOverlayEdit(true);
-									}}
-								>
-									<MdModeEdit />
-								</button>
-								<button
-									onClick={() => {
-										setOpenOverlayDestroy(true);
-									}}
-								>
-									<MdDelete />
-								</button>
-							</div>
-						</>
-					) : (
-						<></>
-					)}
+                <div className="flex flex-col my-auto">
+                  <p>{selectedChat?.name || ''}</p>
+                </div>
+
+                <div className='my-auto ml-2'>
+                  <button
+                    onClick={() => {
+                      setOpenOverlayEdit(true);
+                    }}
+                  >
+                    <MdModeEdit />
+                  </button>
+                </div>
+                
+              </div>
+              <div className="flex flex-row my-auto space-x-2 mr-5">
+                {selectedChat.receiveKey ? (
+                  <>
+                    <button
+                      onClick={() => {
+                        setOpenOverlayVoiceCall(true);
+                      }}
+                    >
+                      <MdCall />
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setOpenOverlayVideoCall(true);
+                      }}
+                    >
+                      <MdVideocam />
+                    </button>
+                  </>
+                ) : (
+                  <></>
+                )}
+                <button
+                  onClick={() => {
+                    setOpenOverlayDestroy(true);
+                  }}
+                >
+                  <MdDelete />
+                </button>
+              </div>
+            </>
+          ) : (
+            <></>
+          )}
 				</div>
 
 				{/* Message List */}
@@ -274,6 +303,24 @@ const ChatWindowComponent = () => {
 					)}
 				</div>
 			</div>
+
+      {/* Overlay Voice Call */}
+			<OverlayComponent show={openOverlayVoiceCall}>
+				<OverlayVoiceCallComponent
+					close={() => {
+						setOpenOverlayVoiceCall(false);
+					}}
+				/>
+			</OverlayComponent>
+
+      {/* Overlay Video Call */}
+			<OverlayComponent show={openOverlayVideoCall}>
+				<OverlayVideoCallComponent
+					close={() => {
+						setOpenOverlayVideoCall(false);
+					}}
+				/>
+			</OverlayComponent>
 
 			{/* Overlay edit */}
 			<OverlayComponent show={openOverlayEdit}>
