@@ -79,27 +79,80 @@ self.addEventListener('message', (event) => {
 });
 
 // Any other custom service worker logic can go here.
+// ==================================================
+
+self.addEventListener('notificationclick', function(event) {
+  event.notification.close();
+
+  // Close all existing notifications
+  self.registration.getNotifications().then(async (notifications) => {
+    notifications.forEach((notification) => {
+      notification.close();
+    });
+  });
+
+  // Add your desired URL or route to open when the notification is clicked
+  var appUrl = '/';
+
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window' }).then((clients) => {
+      // Check if the app is already open
+      for(const client of clients){
+        if (client.url === appUrl && 'focus' in client) {
+          return client.focus();
+        }
+      }
+
+      // If the app is not open, open a new window or tab
+      if (self.clients.openWindow) {
+        return self.clients.openWindow(appUrl);
+      }
+    })
+  );
+});
 
 self.addEventListener('push', async (event) => {
-	const data = JSON.parse(event.data?.text() || '');
+  if (event.data) {
+    // Convert data into object
+    const data = JSON.parse(event.data.text());
 
-	// Trigger event in webapp
-	self.clients.matchAll().then((clients) => {
-		clients.forEach((client) => {
-			client.postMessage({
-				type: 'pushNotification',
-				payload: data,
-			});
-		});
-	});
+    // Trigger event in webapp to pull messages
+    self.clients.matchAll().then((clients) => {
+      clients.forEach((client) => {
+        client.postMessage({
+          type: 'pushNotification',
+          payload: data,
+        });
+      });
+    });
+  
+    // Close all existing notifications
+    self.registration.getNotifications().then(async (notifications) => {
+      notifications.forEach((notification) => {
+        notification.close();
+      });
+    });
 
-	// Create push notification
-	if (data.type === 'M') {
-		await event.waitUntil(
-			self.registration.showNotification('New Message!', {
-				body: 'A new message has been sent to you, open the application to decrypt.',
-				icon: '%PUBLIC_URL%/favicon.ico',
-			})
-		);
-	}
+    // Show notification
+    self.clients.matchAll({ type: 'window' }).then((clients) => {
+      // Check if the app is already open
+      for(const client of clients){
+        if (client.url === '/' && 'focus' in client) {
+          return;
+        }
+      }
+
+      // create new notification if not open
+      switch(data.type) {
+        case 'M':
+          event.waitUntil(
+            self.registration.showNotification('New Message!', {
+              body: 'A new message has been sent to you, open the application to decrypt.',
+              icon: 'https://app.prism.chat/favicon.ico',
+            })
+          );
+          break;
+      }
+    })
+  }
 });

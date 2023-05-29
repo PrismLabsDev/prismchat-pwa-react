@@ -90,6 +90,7 @@ function App() {
 
   const registerNotifications = (baseURL: string, accessToken: string, vapid: string) => {
     const api = apiUtil.init(baseURL, accessToken);
+
     navigator.serviceWorker.ready.then(async (registration) => {
       let subscription = await registration.pushManager.getSubscription();
       if (subscription === null) {
@@ -141,34 +142,37 @@ function App() {
         _setBoxKeys(boxKeysCheck.value);
 
         // Authenticate to server
-        const { cypherText, nonce } = await authUtil.request(serverCheck.value.host);
-        const _accessToken = await authUtil.verify(cypherText, nonce, serverCheck.value.host);
-        setAccessToken(_accessToken);
+        try {
+          const { cypherText, nonce } = await authUtil.request(serverCheck.value.host);
+          const _accessToken = await authUtil.verify(cypherText, nonce, serverCheck.value.host);
 
-        // Get messages
-        if(_accessToken){
-          await messageUtils.get(serverCheck.value.host, _accessToken);
+          // Get messages
+          if(_accessToken){
+            await messageUtils.get(serverCheck.value.host, _accessToken);
 
-          // Request notifications permission from browser
-          if (!('Notification' in window)) {
-            alert('This browser does not support desktop notification');
-          } else if (Notification.permission === 'granted') {
-            registerNotifications(serverCheck.value.host, _accessToken, serverCheck.value.keys.vapid);
-          } else if (Notification.permission !== 'denied') {
-            Notification.requestPermission().then((permission) => {
-              if (permission === 'granted') {
-                registerNotifications(serverCheck.value.host, _accessToken, serverCheck.value.keys.vapid);
-              }
-            });
+            // Request notifications permission from browser
+            if (!('Notification' in window)) {
+              alert('This browser does not support desktop notification');
+            } else if (Notification.permission === 'granted') {
+              registerNotifications(serverCheck.value.host, _accessToken, serverCheck.value.keys.vapid);
+            } else if (Notification.permission !== 'denied') {
+              Notification.requestPermission().then((permission) => {
+                if (permission === 'granted') {
+                  registerNotifications(serverCheck.value.host, _accessToken, serverCheck.value.keys.vapid);
+                }
+              });
+            }
+
+            setAccessToken(_accessToken);
           }
-
-          setInitialized(true);
+        } catch (error) {
+          console.log(error);
         }
       } else {
         setOpenOverlayInit(true);
       }
 		})();
-	}, [initialized]);
+	}, []);
 
 	return (
 		<>
