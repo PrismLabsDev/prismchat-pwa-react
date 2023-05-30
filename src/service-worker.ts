@@ -127,7 +127,7 @@ self.addEventListener('push', async (event) => {
     });
   
     // Close all existing notifications
-    self.registration.getNotifications().then(async (notifications) => {
+    self.registration.getNotifications().then((notifications) => {
       notifications.forEach((notification) => {
         notification.close();
       });
