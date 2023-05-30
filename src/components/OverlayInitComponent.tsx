@@ -53,7 +53,7 @@ const OverlayInitComponent = ({ close }: any) => {
         <p className="font-bold">
           This application is for demonstration purposes ONLY!
         </p>
-        <p className="font-bold">Demo Server: https://api1.prism.chat/api/v1</p>
+        <p className="font-bold">Demo Server: https://api1.prism.chat</p>
         <div>
           <input
             className="input"
