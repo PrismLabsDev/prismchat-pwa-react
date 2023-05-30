@@ -14,8 +14,6 @@ import SentMessageComponent from './SentMessageComponent';
 import OverlayComponent from './OverlayComponent';
 import OverlayEditChatComponent from './OverlayEditChatComponent';
 import OverlayDestroyChatComponent from './OverlayDestroyChatComponent';
-import OverlayVoiceCallComponent from './OverlayVoiceCallComponent';
-import OverlayVideoCallComponent from './OverlayVideoCallComponent';
 
 const ChatWindowComponent = () => {
 	const { 					
@@ -45,8 +43,6 @@ const ChatWindowComponent = () => {
 	// State overlay
 	const [openOverlayEdit, setOpenOverlayEdit]: any = useState(false);
 	const [openOverlayDestroy, setOpenOverlayDestroy]: any = useState(false);
-  const [openOverlayVoiceCall, setOpenOverlayVoiceCall]: any = useState(false);
-  const [openOverlayVideoCall, setOpenOverlayVideoCall]: any = useState(false);
 
 	// Refs
 	const scrollElement: any = useRef(null);
@@ -195,27 +191,6 @@ const ChatWindowComponent = () => {
                 
               </div>
               <div className="flex flex-row my-auto space-x-2 mr-5">
-                {selectedChat.receiveKey ? (
-                  <>
-                    <button
-                      onClick={() => {
-                        setOpenOverlayVoiceCall(true);
-                      }}
-                    >
-                      <MdCall />
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        setOpenOverlayVideoCall(true);
-                      }}
-                    >
-                      <MdVideocam />
-                    </button>
-                  </>
-                ) : (
-                  <></>
-                )}
                 <button
                   onClick={() => {
                     setOpenOverlayDestroy(true);
@@ -303,24 +278,6 @@ const ChatWindowComponent = () => {
 					)}
 				</div>
 			</div>
-
-      {/* Overlay Voice Call */}
-			<OverlayComponent show={openOverlayVoiceCall}>
-				<OverlayVoiceCallComponent
-					close={() => {
-						setOpenOverlayVoiceCall(false);
-					}}
-				/>
-			</OverlayComponent>
-
-      {/* Overlay Video Call */}
-			<OverlayComponent show={openOverlayVideoCall}>
-				<OverlayVideoCallComponent
-					close={() => {
-						setOpenOverlayVideoCall(false);
-					}}
-				/>
-			</OverlayComponent>
 
 			{/* Overlay edit */}
 			<OverlayComponent show={openOverlayEdit}>
