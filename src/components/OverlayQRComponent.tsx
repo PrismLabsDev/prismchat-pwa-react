@@ -6,13 +6,19 @@ import { AppContext } from '../contexts/AppContext';
 const OverlayQRComponent = ({ close }: any) => {
 	const {
 		chatWindowSelected,
-		setChatWindowSelected,
-		identityKeys,
-		setIdentityKeys,
-		chats,
-		setChats,
-		selectedChat,
-		setSelectedChat,
+    setChatWindowSelected,
+    accessToken,
+    setAccessToken,
+    identityKeys,
+    setIdentityKeys,
+    server,
+    setServer,
+    boxKeys,
+    setBoxKeys,
+    chats,
+    setChats,
+    selectedChat,
+    setSelectedChat,
 	}: any = useContext(AppContext);
 
 	const [qrUri, setQrUri] = useState('');
@@ -20,7 +26,7 @@ const OverlayQRComponent = ({ close }: any) => {
 	useEffect(() => {
 		(async function () {
 			setQrUri(
-				await QRCode.toDataURL(identityKeys.public, {
+				await QRCode.toDataURL(`${identityKeys.public}@${server?.host}`, {
 					width: 1000,
 				})
 			);

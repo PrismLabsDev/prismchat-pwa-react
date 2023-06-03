@@ -5,63 +5,45 @@ import prismClient from '../services/prismClient';
 import { AppContext } from '../contexts/AppContext';
 
 const OverlayExchangeComponent = ({ close }: any) => {
-	const { chatWindowSelected, setChatWindowSelected }: any =
-		useContext(AppContext);
+	const {
+		chatWindowSelected,
+    setChatWindowSelected,
+    accessToken,
+    setAccessToken,
+    identityKeys,
+    setIdentityKeys,
+    server,
+    setServer,
+    boxKeys,
+    setBoxKeys,
+    chats,
+    setChats,
+    selectedChat,
+    setSelectedChat,
+	}: any = useContext(AppContext);
 
 	const [encryptRecipientKey, setEncryptRecipientKey] = useState('');
 	const [encrypted, setEncrypted] = useState('');
 	const [decryptMessage, setDecryptMessage] = useState('');
 	const [decrypted, setDecrypted] = useState('');
 
-	const [boxPublicKey, setBoxPublickey]: any = useState('');
-	const [identityPublicKey, setIdentityPublicKey]: any = useState('');
-
-	useEffect(() => {
-		(async function () {
-			let identityKeyCheck: any = await db.general
-				.where('name')
-				.equals('IdentityKeys')
-				.first();
-
-			let boxKeysCheck: any = await db.general
-				.where('name')
-				.equals('BoxKeys')
-				.first();
-
-			if (boxKeysCheck !== undefined && identityKeyCheck !== undefined) {
-				setBoxPublickey(boxKeysCheck.value.public);
-				setIdentityPublicKey(identityKeyCheck.value.public);
-			}
-		})();
-	});
-
 	const boxEncrypt = async () => {
-		let boxKeysQuery: any = await db.general
-			.where('name')
-			.equals('BoxKeys')
-			.first();
-
 		const prism: any = await prismClient.init(
-			boxKeysQuery.value.public,
-			boxKeysQuery.value.private
+			boxKeys.public,
+			boxKeys.private
 		);
 
-		const encrypted = prism.boxEncrypt(identityPublicKey, encryptRecipientKey);
+		const encrypted = prism.boxEncrypt(`${identityKeys.public}@${server.host}`, encryptRecipientKey);
 
 		setEncrypted(
-			`${boxKeysQuery.value.public}:${encrypted.nonce}:${encrypted.cypherText}`
+			`${boxKeys.public}:${encrypted.nonce}:${encrypted.cypherText}`
 		);
 	};
 
 	const boxDecrypt = async () => {
-		let boxKeysQuery: any = await db.general
-			.where('name')
-			.equals('BoxKeys')
-			.first();
-
 		const prism: any = await prismClient.init(
-			boxKeysQuery.value.public,
-			boxKeysQuery.value.private
+			boxKeys.public,
+			boxKeys.private
 		);
 
 		const [decryptSenderKey, nonce, cypherText] = decryptMessage.split(':');
@@ -78,7 +60,7 @@ const OverlayExchangeComponent = ({ close }: any) => {
 			value: generatedBoxKeys,
 		});
 
-		setBoxPublickey(generatedBoxKeys.public);
+    setBoxKeys(generatedBoxKeys)
 	};
 
 	return (
@@ -90,10 +72,10 @@ const OverlayExchangeComponent = ({ close }: any) => {
 					<button
 						className="break-words"
 						onClick={() => {
-							navigator.clipboard.writeText(boxPublicKey);
+							navigator.clipboard.writeText(boxKeys.public);
 						}}
 					>
-						{boxPublicKey}
+						{boxKeys.public}
 					</button>
 					<button
 						className="btn-sm w-full"
@@ -176,6 +158,11 @@ const OverlayExchangeComponent = ({ close }: any) => {
 				<button
 					onClick={() => {
 						close();
+
+            setEncryptRecipientKey('');
+            setEncrypted('');
+            setDecryptMessage('');
+            setDecrypted('');
 					}}
 				>
 					Close
