@@ -47,6 +47,7 @@ const OverlayRequestApprovalComponent = ({ request, close }: any) => {
 		await db.chat.add({
 			name: requestChatName,
 			pubkey: request.pubkey,
+      server: request.server,
 			masterPublic: sessionMasterKeys.publicKey,
 			masterPrivate: sessionMasterKeys.privateKey,
 			sendCount: 0,

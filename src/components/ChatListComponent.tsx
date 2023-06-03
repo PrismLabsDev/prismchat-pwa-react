@@ -26,13 +26,19 @@ import OverlayRequestApprovalComponent from './OverlayRequestApprovalComponent';
 const ChatListComponent = () => {
 	const {
 		chatWindowSelected,
-		setChatWindowSelected,
-		identityKeys,
-		setIdentityKeys,
-		chats,
-		setChats,
-		selectedChat,
-		setSelectedChat,
+    setChatWindowSelected,
+    accessToken,
+    setAccessToken,
+    identityKeys,
+    setIdentityKeys,
+    server,
+    setServer,
+    boxKeys,
+    setBoxKeys,
+    chats,
+    setChats,
+    selectedChat,
+    setSelectedChat,
 	}: any = useContext(AppContext);
 
 	// Overlay toggle
@@ -85,7 +91,7 @@ const ChatListComponent = () => {
 						</button>
 						<button
 							onClick={() => {
-								navigator.clipboard.writeText(identityKeys.public);
+								navigator.clipboard.writeText(`${identityKeys.public}@${server?.host}`);
 							}}
 						>
 							<MdOutlineKey />
@@ -123,7 +129,7 @@ const ChatListComponent = () => {
 						<div className="mx-auto p-5">
 							<button
 								onClick={() => {
-									navigator.clipboard.writeText(identityKeys.public);
+                  navigator.clipboard.writeText(`${identityKeys.public}@${server?.host}`);
 								}}
 							>
 								<img

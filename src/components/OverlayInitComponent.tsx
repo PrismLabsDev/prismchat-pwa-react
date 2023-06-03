@@ -22,8 +22,22 @@ const OverlayInitComponent = ({ close }: any) => {
   const [serverURI, setServerURI]: any = useState('');
 
   const createNewAccount: any = async () => {
+
+    let formattedServerURL: string = serverURI;
+
+    // Remove characters for formatting
+    formattedServerURL = formattedServerURL.replace('https://', '');
+    formattedServerURL = formattedServerURL.replace('http://', '');
+    formattedServerURL = formattedServerURL.replace('/', '');
+
+    if(formattedServerURL.includes('localhost')){
+      formattedServerURL = `http://${formattedServerURL}`;
+    } else {
+      formattedServerURL = `https://${formattedServerURL}`;
+    }
+
 		// Get server keys
-		const serverIdentify = await axios.get(serverURI);
+		const serverIdentify = await axios.get(formattedServerURL);
     setServer({
       host: serverURI,
       keys: serverIdentify.data.keys,
@@ -53,7 +67,7 @@ const OverlayInitComponent = ({ close }: any) => {
         <p className="font-bold">
           This application is for demonstration purposes ONLY!
         </p>
-        <p className="font-bold">Demo Server: https://api1.prism.chat</p>
+        <p className="font-bold">Demo Server: api1.prism.chat</p>
         <div>
           <input
             className="input"

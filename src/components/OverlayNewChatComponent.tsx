@@ -23,12 +23,12 @@ const OverlayNewChatComponent = ({ close }: any) => {
     setSelectedChat, }: any =
 	useContext(AppContext);
 
-  const api = apiUtil.init(server?.host, accessToken);
-
 	const [newChatRecipient, setNewChatRecipient] = useState('');
 	const [newChatName, setNewChatName] = useState('');
 
-	const startNewChat = async (recipientPublicKey: string) => {
+	const startNewChat = async (newChatRecipient: string) => {
+    const [recipientPublicKey, recipientServer] = newChatRecipient.split('@');
+
 		const checkChat = await db.chat
 			.where('pubkey')
 			.equals(recipientPublicKey)
@@ -42,6 +42,7 @@ const OverlayNewChatComponent = ({ close }: any) => {
 			await db.chat.add({
 				name: newChatName,
 				pubkey: recipientPublicKey,
+        server: recipientServer,
 				masterPublic: sessionMasterKeys.publicKey,
 				masterPrivate: sessionMasterKeys.privateKey,
 				sendCount: 0,
@@ -54,13 +55,18 @@ const OverlayNewChatComponent = ({ close }: any) => {
 				'IC',
 				0,
 				null,
-				sessionMasterKeys.publicKey,
+				{
+          session: sessionMasterKeys.publicKey,
+          server: server?.host
+        },
 				recipientPublicKey
 			);
+
 			let layer3Up = prism.prismEncrypt_Layer3(
 				layer2Up.nonce,
 				layer2Up.cypherText
 			);
+      
 			let encryptedData = prism.prismEncrypt_Layer4(
 				layer3Up.key,
 				layer3Up.nonce,
@@ -68,6 +74,7 @@ const OverlayNewChatComponent = ({ close }: any) => {
 				recipientPublicKey
 			);
 
+      const api = apiUtil.init(server?.host, accessToken);
 			await api.post('/message', {
 				to: recipientPublicKey,
 				data: encryptedData,

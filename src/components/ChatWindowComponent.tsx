@@ -33,7 +33,7 @@ const ChatWindowComponent = () => {
     setSelectedChat, }: any =
 	useContext(AppContext);
 
-  const api = apiUtil.init(server?.host, accessToken);
+  const api = apiUtil.init(selectedChat?.server, accessToken);
 
 	// State
 	const [messages, setMessages]: any = useState([]);
@@ -169,11 +169,15 @@ const ChatWindowComponent = () => {
                 >
                   <MdChevronLeft />
                 </button>
-                <img
-                  className="p-1 mr-2 w-12"
-                  src={`data:image/svg+xml;utf8,${encodeURIComponent(avatar)}`}
-                  alt="avatar"
-                />
+                <button onClick={() => {
+                  navigator.clipboard.writeText(`${selectedChat?.pubkey}@${selectedChat?.server}`);
+                }}>
+                  <img
+                    className="p-1 mr-2 w-12"
+                    src={`data:image/svg+xml;utf8,${encodeURIComponent(avatar)}`}
+                    alt="avatar"
+                  />
+                </button>
 
                 <div className="flex flex-col my-auto">
                   <p>{selectedChat?.name || ''}</p>

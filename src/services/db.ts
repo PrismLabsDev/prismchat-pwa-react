@@ -9,6 +9,7 @@ export interface General {
 export interface Chat {
 	name: string;
 	pubkey: string;
+  server: string;
 	masterPublic: string;
 	masterPrivate: string;
 	sendCount: number;
@@ -19,6 +20,7 @@ export interface Chat {
 
 export interface Request {
 	pubkey: string;
+  server: string;
 	receivedPublic: string;
 }
 

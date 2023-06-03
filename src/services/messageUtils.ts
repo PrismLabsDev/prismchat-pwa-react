@@ -40,7 +40,8 @@ const get = async (baseURL: string, accessToken: string) => {
 const processMessage_IC = async (from: string, data: any) => {
 	await db.request.add({
 		pubkey: from,
-		receivedPublic: data,
+    server: data.server,
+		receivedPublic: data.session,
 	});
 };
 
