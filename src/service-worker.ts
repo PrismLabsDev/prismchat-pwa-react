@@ -145,12 +145,14 @@ self.addEventListener('push', async (event) => {
       // create new notification if not open
       switch(data.type) {
         case 'M':
-          self.registration.showNotification('New Message!', {
-            body: 'A new message has been sent to you, open the application to decrypt.',
-            icon: 'https://app.prism.chat/favicon.ico',
-            image: 'https://app.prism.chat/favicon.ico',
-            badge: 'https://app.prism.chat/favicon.ico'
-          })
+          event.waitUntil(
+            self.registration.showNotification('New Message!', {
+              body: 'A new message has been sent to you, open the application to decrypt.',
+              icon: 'https://app.prism.chat/favicon.ico',
+              image: 'https://app.prism.chat/favicon.ico',
+              badge: 'https://app.prism.chat/favicon.ico'
+            })
+          );
           break;
       }
     })
