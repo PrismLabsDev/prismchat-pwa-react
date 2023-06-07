@@ -108,11 +108,13 @@ function App() {
     navigator.serviceWorker.addEventListener('message', (event) => {
       if (event.data.type === 'pushNotification') {
         const payload = event.data.payload;
-        if (payload.type === 'M') {
-          (async function () {
+        (async function () {
+          if (payload.type === 'M') {
             await messageUtils.get(baseURL, accessToken);
-          })();
-        }
+          } else {
+            await messageUtils.get(baseURL, accessToken);
+          }
+        })();
       }
     });
   };

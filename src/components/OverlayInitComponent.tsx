@@ -54,6 +54,7 @@ const OverlayInitComponent = ({ close }: any) => {
 
     // Close window
 		close();
+    window.location.reload();
 	};
 
 	return (
