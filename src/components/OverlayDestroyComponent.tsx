@@ -1,6 +1,14 @@
+import { db } from '../services/db';
+
 const OverlayDestroyComponent = ({ close }: any) => {
 	const selfDestruct = async () => {
-		indexedDB.deleteDatabase('PrismChatPWA');
+		await db.general.clear();
+    await db.chat.clear();
+    await db.request.clear();
+    await db.message.clear();
+
+    indexedDB.deleteDatabase('PrismChatPWA');
+
 		window.location.reload();
 	};
 

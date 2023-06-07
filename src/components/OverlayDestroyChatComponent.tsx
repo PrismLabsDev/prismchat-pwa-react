@@ -17,12 +17,8 @@ const OverlayDestroyChatComponent = ({ chat, close }: any) => {
 
 	const destroyChat = async () => {
 		setSelectedChat(null);
-    
-    // Remove all data
-    await db.general.clear();
-    await db.chat.clear();
-    await db.request.clear();
-    await db.message.clear();
+    await db.chat.where('pubkey').equals(chat.pubkey).delete();
+		await db.message.where('pubkey').equals(chat.pubkey).delete();
 	};
 
 	return (
