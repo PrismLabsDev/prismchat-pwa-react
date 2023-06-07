@@ -91,6 +91,8 @@ function App() {
   const registerNotifications = (baseURL: string, accessToken: string, vapid: string) => {
     const api = apiUtil.init(baseURL, accessToken);
 
+    console.log(`VAPID: ${vapid}`);
+
     navigator.serviceWorker.ready.then(async (registration) => {
       let subscription = await registration.pushManager.getSubscription();
       if (subscription === null) {
