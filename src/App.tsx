@@ -88,7 +88,7 @@ function App() {
 		}
 	}, [chatsQuery]);
 
-  const registerNotifications = (baseURL: string, accessToken: string, vapid: string) => {
+  const registerNotifications = async (baseURL: string, accessToken: string, vapid: string) => {
     const api = apiUtil.init(baseURL, accessToken);
 
     console.log(`VAPID: ${vapid}`);
@@ -158,11 +158,11 @@ function App() {
             if (!('Notification' in window)) {
               alert('This browser does not support desktop notification');
             } else if (Notification.permission === 'granted') {
-              registerNotifications(serverCheck.value.host, _accessToken, serverCheck.value.keys.vapid);
+              await registerNotifications(serverCheck.value.host, _accessToken, serverCheck.value.keys.vapid);
             } else if (Notification.permission !== 'denied') {
-              Notification.requestPermission().then((permission) => {
+              Notification.requestPermission().then(async (permission) => {
                 if (permission === 'granted') {
-                  registerNotifications(serverCheck.value.host, _accessToken, serverCheck.value.keys.vapid);
+                  await registerNotifications(serverCheck.value.host, _accessToken, serverCheck.value.keys.vapid);
                 }
               });
             }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
+import apiUtil from '../services/apiUtil';
 import { AppContext } from '../contexts/AppContext';
 import prismClient from '../services/prismClient';
 
@@ -23,21 +24,10 @@ const OverlayInitComponent = ({ close }: any) => {
 
   const createNewAccount: any = async () => {
 
-    let formattedServerURL: string = serverURI;
-
-    // Remove characters for formatting
-    formattedServerURL = formattedServerURL.replace('https://', '');
-    formattedServerURL = formattedServerURL.replace('http://', '');
-    formattedServerURL = formattedServerURL.replace('/', '');
-
-    if(formattedServerURL.includes('localhost')){
-      formattedServerURL = `http://${formattedServerURL}`;
-    } else {
-      formattedServerURL = `https://${formattedServerURL}`;
-    }
+    const api = apiUtil.init(serverURI, null);
 
 		// Get server keys
-		const serverIdentify = await axios.get(formattedServerURL);
+		const serverIdentify = await api.get('/');
     setServer({
       host: serverURI,
       keys: serverIdentify.data.keys,
