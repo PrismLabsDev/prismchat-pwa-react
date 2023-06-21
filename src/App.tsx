@@ -105,16 +105,17 @@ function App() {
       api.post('/push/subscribe', subscription);
     });
 
-    navigator.serviceWorker.addEventListener('message', (event) => {
-      if (event.data.type === 'pushNotification') {
-        const payload = event.data.payload;
-        (async function () {
-          if (payload.type === 'M') {
-            await messageUtils.get(baseURL, accessToken);
-          } else {
-            await messageUtils.get(baseURL, accessToken);
-          }
-        })();
+    // Broadcast push from service worker
+    const channel = new BroadcastChannel('prism-chat-sw');
+    channel.addEventListener('message', (event) => {
+      if (event.data.event === 'pushNotification') {
+        switch(event.data.payload.type) {
+          case 'M':
+            messageUtils.get(baseURL, accessToken);
+            break;
+          default:
+            messageUtils.get(baseURL, accessToken);
+        }
       }
     });
   };

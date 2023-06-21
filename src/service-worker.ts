@@ -116,14 +116,11 @@ self.addEventListener('push', async (event) => {
     // Convert data into object
     const data = JSON.parse(event.data.text());
 
-    // Trigger event in webapp to pull messages
-    self.clients.matchAll().then((clients) => {
-      clients.forEach((client) => {
-        client.postMessage({
-          type: 'pushNotification',
-          payload: data,
-        });
-      });
+    // Broadcast event to client
+    const channel = new BroadcastChannel('prism-chat-sw');    
+    channel.postMessage({ 
+      event: 'pushNotification', 
+      payload: data
     });
   
     // Close all existing notifications
