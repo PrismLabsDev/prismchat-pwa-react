@@ -253,6 +253,7 @@ const ChatListComponent = () => {
 					close={() => {
 						setSelectedRequest(null);
 						setOpenOverlayRequestApproval(false);
+            setShowChatList(true);
 					}}
 				/>
 			</OverlayComponent>

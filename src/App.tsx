@@ -89,35 +89,39 @@ function App() {
 	}, [chatsQuery]);
 
   const registerNotifications = async (baseURL: string, accessToken: string, vapid: string) => {
-    const api = apiUtil.init(baseURL, accessToken);
+    if('serviceWorker' in navigator && 'PushManager' in window){
+      const api = apiUtil.init(baseURL, accessToken);
 
-    console.log(`VAPID: ${vapid}`);
+      console.log(`VAPID: ${vapid}`);
 
-    navigator.serviceWorker.ready.then(async (registration) => {
-      let subscription = await registration.pushManager.getSubscription();
-      if (subscription === null) {
-        subscription = await registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: vapid,
-        });
-      }
-      console.log(subscription);
-      api.post('/push/subscribe', subscription);
-    });
-
-    // Broadcast push from service worker
-    const channel = new BroadcastChannel('prism-chat-sw');
-    channel.addEventListener('message', (event) => {
-      if (event.data.event === 'pushNotification') {
-        switch(event.data.payload.type) {
-          case 'M':
-            messageUtils.get(baseURL, accessToken);
-            break;
-          default:
-            messageUtils.get(baseURL, accessToken);
+      navigator.serviceWorker.ready.then(async (registration) => {
+        let subscription = await registration.pushManager.getSubscription();
+        if (subscription === null) {
+          subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: vapid,
+          });
         }
-      }
-    });
+        console.log(subscription);
+        api.post('/push/subscribe', subscription);
+      });
+
+      // Broadcast push from service worker
+      const channel = new BroadcastChannel('prism-chat-sw');
+      channel.addEventListener('message', (event) => {
+        if (event.data.event === 'pushNotification') {
+          switch(event.data.payload.type) {
+            case 'M':
+              messageUtils.get(baseURL, accessToken);
+              break;
+            default:
+              messageUtils.get(baseURL, accessToken);
+          }
+        }
+      });
+    } else {
+      console.log('Service worker or Push manager are not available in this browser');
+    }
   };
 
 	// Effect on first open
@@ -154,10 +158,10 @@ function App() {
           // Get messages
           if(_accessToken){
             await messageUtils.get(serverCheck.value.host, _accessToken);
-
+            
             // Request notifications permission from browser
             if (!('Notification' in window)) {
-              alert('This browser does not support desktop notification');
+              console.log('This browser does not support notification');
             } else if (Notification.permission === 'granted') {
               await registerNotifications(serverCheck.value.host, _accessToken, serverCheck.value.keys.vapid);
             } else if (Notification.permission !== 'denied') {
