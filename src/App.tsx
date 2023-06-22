@@ -89,20 +89,16 @@ function App() {
 	}, [chatsQuery]);
 
   const registerNotifications = async (baseURL: string, accessToken: string, vapid: string) => {
-    if('serviceWorker' in navigator && 'PushManager' in window){
+    if('serviceWorker' in navigator){
       const api = apiUtil.init(baseURL, accessToken);
-
-      console.log(`VAPID: ${vapid}`);
-
       navigator.serviceWorker.ready.then(async (registration) => {
         let subscription = await registration.pushManager.getSubscription();
-        if (subscription === null) {
+        if (!subscription) {
           subscription = await registration.pushManager.subscribe({
             userVisibleOnly: true,
             applicationServerKey: vapid,
           });
         }
-        console.log(subscription);
         api.post('/push/subscribe', subscription);
       });
 
@@ -119,8 +115,9 @@ function App() {
           }
         }
       });
+
     } else {
-      console.log('Service worker or Push manager are not available in this browser');
+      console.log('Service worker is not available in this browser');
     }
   };
 
