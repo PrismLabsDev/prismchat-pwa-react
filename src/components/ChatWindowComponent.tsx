@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../services/db';
-import apiUtil from '../services/apiUtil';
+import axiosClient from '../services/axiosClient';
 import prismClient from '../services/prismClient';
 import { MdSend, MdDelete, MdModeEdit, MdChevronLeft, MdCall, MdVideocam } from 'react-icons/md';
 import { toSvg } from 'jdenticon';
@@ -33,7 +33,7 @@ const ChatWindowComponent = () => {
     setSelectedChat, }: any =
 	useContext(AppContext);
 
-  const api = apiUtil.init(selectedChat?.server, accessToken);
+  const api = axiosClient.init(selectedChat?.server, accessToken);
 
 	// State
 	const [messages, setMessages]: any = useState([]);
@@ -83,6 +83,12 @@ const ChatWindowComponent = () => {
 	}, [messages]);
 
 	const sendMessage = async (message: any) => {
+
+    // If message is empty, do not send
+    if(message.length === 0){
+      return;
+    }
+
 		// add message to db
 		const newMessageID = await db.message.add({
 			pubkey: selectedChat.pubkey,

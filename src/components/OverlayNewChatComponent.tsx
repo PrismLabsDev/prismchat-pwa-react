@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import apiUtil from '../services/apiUtil';
+import axiosClient from '../services/axiosClient';
 import { db } from '../services/db';
 import prismClient from '../services/prismClient';
 
@@ -74,7 +74,7 @@ const OverlayNewChatComponent = ({ close }: any) => {
 				recipientPublicKey
 			);
 
-      const api = apiUtil.init(server?.host, accessToken);
+      const api = axiosClient.init(server?.host, accessToken);
 			await api.post('/message', {
 				to: recipientPublicKey,
 				data: encryptedData,

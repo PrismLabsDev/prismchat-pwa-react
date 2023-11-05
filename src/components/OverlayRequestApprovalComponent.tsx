@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { toSvg } from 'jdenticon';
-import apiUtil from '../services/apiUtil';
+import axiosClient from '../services/axiosClient';
 import { db } from '../services/db';
 import prismClient from '../services/prismClient';
 
@@ -24,7 +24,7 @@ const OverlayRequestApprovalComponent = ({ request, close }: any) => {
     setSelectedChat, }: any =
 	useContext(AppContext);
 
-  const api = apiUtil.init(server?.host, accessToken);
+  const api = axiosClient.init(server?.host, accessToken);
 
 	const [avatar, setAvatar] = useState('');
 	const [requestChatName, setRequestChatName]: any = useState('');

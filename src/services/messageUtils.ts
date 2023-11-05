@@ -1,9 +1,9 @@
 import { db } from './db';
-import apiUtil from './apiUtil';
+import axiosClient from './axiosClient';
 import prismClient from './prismClient';
 
 const get = async (baseURL: string, accessToken: string) => {
-  const api = apiUtil.init(baseURL, accessToken);
+  const api = axiosClient.init(baseURL, accessToken);
 	const prism: any = await prismClient.init();
 	const newChats = await api.get('/message');
 
@@ -22,13 +22,13 @@ const get = async (baseURL: string, accessToken: string) => {
 		);
 
 		switch (layer2Down.type) {
-			case 'IC':
+			case 'IC': // initial communication
 				processMessage_IC(layer3Down.from, layer2Down.cypherText);
 				break;
-			case 'RC':
+			case 'RC': // response communication
 				processMessage_RC(layer3Down.from, layer2Down.cypherText);
 				break;
-			case 'M':
+			case 'M': // new message
 				processMessage_M(layer3Down.from, layer2Down);
 				break;
 			default:

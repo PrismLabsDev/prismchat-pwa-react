@@ -4,7 +4,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from './services/db';
 import authUtil from './services/authUtil';
 import {messageUtils} from './services/messageUtils'
-import apiUtil from './services/apiUtil'
+import axiosClient from './services/axiosClient'
 
 // Components
 import ChatListComponent from './components/ChatListComponent';
@@ -90,7 +90,7 @@ function App() {
 
   const registerNotifications = async (baseURL: string, accessToken: string, vapid: string) => {
     if('serviceWorker' in navigator){
-      const api = apiUtil.init(baseURL, accessToken);
+      const api = axiosClient.init(baseURL, accessToken);
       navigator.serviceWorker.ready.then(async (registration) => {
         let subscription = await registration.pushManager.getSubscription();
         if (!subscription) {

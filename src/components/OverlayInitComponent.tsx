@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
-import apiUtil from '../services/apiUtil';
+import axiosClient from '../services/axiosClient';
 import { AppContext } from '../contexts/AppContext';
 import prismClient from '../services/prismClient';
 
@@ -24,7 +24,7 @@ const OverlayInitComponent = ({ close }: any) => {
 
   const createNewAccount: any = async () => {
 
-    const api = apiUtil.init(serverURI, null);
+    const api = axiosClient.init(serverURI, null);
 
 		// Get server keys
 		const serverIdentify = await api.get('/');
