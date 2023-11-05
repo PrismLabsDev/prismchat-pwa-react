@@ -20,6 +20,10 @@ const OverlayInitComponent = ({ close }: any) => {
     setSelectedChat,
 	}: any = useContext(AppContext);
 
+  const officialPrismServers: string[] = [
+    'nyc1.prism.chat'
+  ]
+
   const [serverURI, setServerURI]: any = useState('');
 
   const createNewAccount: any = async () => {
@@ -58,11 +62,18 @@ const OverlayInitComponent = ({ close }: any) => {
         <p className="font-bold">
           This application is for demonstration purposes ONLY!
         </p>
-        <p className="font-bold">Demo Server: api1.prism.chat</p>
+        <div>
+          <select className="w-full input pr-96" name="officialServers" id="officialServers" onChange={(e: any) => {
+            setServerURI(e.target.value);
+          }}>
+            <option key={`officialPrismServer[LIST]-selectDefaultList`} value={''}>Custom Server</option>
+            {officialPrismServers.map((officialPrismServer, index) => <option key={`officialPrismServer[${index}]-${officialPrismServer}`} value={officialPrismServer}>{officialPrismServer}</option>)}
+          </select>
+        </div>
         <div>
           <input
             className="input"
-            placeholder="Preferred prism server"
+            placeholder="Prism server"
             type="text"
             value={serverURI}
             onChange={(e: any) => {
