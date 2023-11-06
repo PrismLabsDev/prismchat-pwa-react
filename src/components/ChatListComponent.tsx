@@ -160,12 +160,12 @@ const ChatListComponent = () => {
 								} w-1/2 w-full pb-2`}
 							>
 								<button
-									className="w-full"
+									className='w-full'
 									onClick={() => {
 										setShowChatList(false);
 									}}
 								>
-									Requests
+									Requests <span className={`${requests?.length > 0 ? 'inline' : 'hidden'}`}>({requests?.length})</span>
 								</button>
 							</div>
 						</div>
